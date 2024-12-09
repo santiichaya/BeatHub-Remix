@@ -9,3 +9,63 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+
+// Prisma Schema
+
+model User {
+  id              Int       @id @default(autoincrement())
+  username        String    @unique // Cambiado de 'name' a 'username'
+  email           String    @unique
+  password        String    // Contraseña del usuario
+  time            DateTime  // Atributo de tiempo para rastrear actividades
+  favoriteSongId  Int?      // ID de la canción favorita
+  favoriteSong    Song?     @relation(fields: [favoriteSongId], references: [id])
+  playlists       Playlist[]
+  likedSongs      Song[]    @relation("LikedSongs")
+  followedArtists Artist[]  @relation("FollowedArtists")
+  comments        Comment[]
+}
+
+model Playlist {
+  id       Int       @id @default(autoincrement())
+  name     String
+  userId   Int
+  user     User       @relation(fields: [userId], references: [id])
+  songs    Song[]     @relation("PlaylistSongs")
+}
+
+model Song {
+  id          Int       @id @default(autoincrement())
+  title       String
+  apiId       String    // ID de la canción en la API externa
+  genre       String?   // Género de la canción
+  releaseDate DateTime? // Fecha de lanzamiento
+  artistId    Int
+  artist      Artist     @relation(fields: [artistId], references: [id])
+  likedBy     User[]     @relation("LikedSongs")
+  favouritedBy User[]    @relation("FavouriteSongs")
+  playlists   Playlist[] @relation("PlaylistSongs")
+  comments    Comment[]
+  albumCover  String?    // Portada del álbum
+  duration    Int?       // Duración en segundos
+}
+
+model Artist {
+  id           Int       @id @default(autoincrement())
+  name         String
+  apiId        String    // ID del artista en la API externa
+  followers    User[]    @relation("FollowedArtists")
+  songs        Song[]
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  content     String    // Contenido del comentario
+  createdAt   DateTime  @default(now()) // Fecha de creación
+  updatedAt   DateTime  @updatedAt      // Fecha de última actualización
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  songId      Int
+  song        Song      @relation(fields: [songId], references: [id])
+}
