@@ -15,24 +15,24 @@ datasource db {
 
 model User {
   id              Int       @id @default(autoincrement())
-  username        String    @unique // Cambiado de 'name' a 'username'
+  username        String    @unique
   email           String    @unique
-  password        String    // Contraseña del usuario
-  time            DateTime  // Atributo de tiempo para rastrear actividades
-  favoriteSongId  Int?      // ID de la canción favorita
-  favoriteSong    Song?     @relation(fields: [favoriteSongId], references: [id])
+  password        String
+  time            DateTime
+  favoriteSongId  Int?
   playlists       Playlist[]
-  likedSongs      Song[]    @relation("LikedSongs")
-  followedArtists Artist[]  @relation("FollowedArtists")
+  followedArtists Artist[]
   comments        Comment[]
+  likedSongs      Song[]    @relation("LikedSongs")
+  favoriteSong    Song?     @relation("FavoriteSong",fields: [favoriteSongId], references: [id],onDelete: Cascade)  
 }
 
 model Playlist {
   id       Int       @id @default(autoincrement())
   name     String
   userId   Int
-  user     User       @relation(fields: [userId], references: [id])
-  songs    Song[]     @relation("PlaylistSongs")
+  songs    Song[]
+  user     User      @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 model Song {
@@ -42,30 +42,29 @@ model Song {
   genre       String?   // Género de la canción
   releaseDate DateTime? // Fecha de lanzamiento
   artistId    Int
-  artist      Artist     @relation(fields: [artistId], references: [id])
-  likedBy     User[]     @relation("LikedSongs")
-  favouritedBy User[]    @relation("FavouriteSongs")
-  playlists   Playlist[] @relation("PlaylistSongs")
-  comments    Comment[]
-  albumCover  String?    // Portada del álbum
   duration    Int?       // Duración en segundos
+  artist      Artist     @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  likedBy     User[]     @relation("LikedSongs")
+  favoritedBy User[]    @relation("FavoriteSong")
+  playlists   Playlist[]
+  comments    Comment[]
 }
 
 model Artist {
   id           Int       @id @default(autoincrement())
   name         String
   apiId        String    // ID del artista en la API externa
-  followers    User[]    @relation("FollowedArtists")
+  followers    User[]
   songs        Song[]
 }
 
 model Comment {
   id          Int       @id @default(autoincrement())
-  content     String    // Contenido del comentario
-  createdAt   DateTime  @default(now()) // Fecha de creación
-  updatedAt   DateTime  @updatedAt      // Fecha de última actualización
+  content     String    
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt      
   userId      Int
-  user        User      @relation(fields: [userId], references: [id])
   songId      Int
-  song        Song      @relation(fields: [songId], references: [id])
+  user        User      @relation(fields: [userId], references: [id],onDelete: Cascade)
+  song        Song      @relation(fields: [songId], references: [id],onDelete: Cascade)
 }
