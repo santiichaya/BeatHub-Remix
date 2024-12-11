@@ -4,6 +4,11 @@ export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        'primary': '#242424',
+        'secondary': '#247BA0',
+        'header': '#5c5c5c'
+      },
       fontFamily: {
         sans: [
           "Inter",
@@ -15,6 +20,7 @@ export default {
           "Segoe UI Symbol",
           "Noto Color Emoji",
         ],
+        kanit: ['Kanit', 'sans-serif']
       },
     },
   },

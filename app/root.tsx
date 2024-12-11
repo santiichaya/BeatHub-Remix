@@ -2,12 +2,11 @@ import {
   Links,
   Meta,
   Outlet,
-  Scripts,
-  ScrollRestoration,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
+import Header from "./components/Header";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,7 +21,7 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout() {
   return (
     <html lang="en">
       <head>
@@ -32,9 +31,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+        <>
+          <nav>
+            <Header />
+          </nav>
+        </>
       </body>
     </html>
   );
