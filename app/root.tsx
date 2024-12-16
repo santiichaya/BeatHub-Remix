@@ -7,6 +7,8 @@ import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 import Header from "./components/Header";
+import { Container } from "postcss";
+import { ContainerPlayList } from "./components/ContainerPlayList.tsx";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -34,6 +36,7 @@ export function Layout() {
         <>
           <nav>
             <Header />
+            <ContainerPlayList/>
           </nav>
         </>
       </body>
