@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -68,3 +69,76 @@ model Comment {
   user        User      @relation(fields: [userId], references: [id],onDelete: Cascade)
   song        Song      @relation(fields: [songId], references: [id],onDelete: Cascade)
 }
+=======
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+// Prisma Schema
+
+model User {
+  id              Int       @id @default(autoincrement())
+  username        String    @unique
+  email           String    @unique
+  password        String
+  createdAt      DateTime  @default(now()) 
+  time            Int
+  favoriteSongId  Int?
+  playlists       Playlist[]
+  followedArtists Artist[]
+  comments        Comment[]
+  likedSongs      Song[]    @relation("LikedSongs")
+  favoriteSong    Song?     @relation("FavoriteSong",fields: [favoriteSongId], references: [id],onDelete: Cascade)  
+}
+
+model Playlist {
+  id       Int       @id @default(autoincrement())
+  name     String
+  userId   Int
+  songs    Song[]
+  user     User      @relation(fields: [userId], references: [id],onDelete: Cascade)
+}
+
+model Song {
+  id          Int       @id @default(autoincrement())
+  title       String
+  apiId       String    // ID de la canción en la API externa
+  genre       String?   // Género de la canción
+  releaseDate DateTime? // Fecha de lanzamiento
+  artistId    Int
+  duration    Int?       // Duración en segundos
+  artist      Artist     @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  likedBy     User[]     @relation("LikedSongs")
+  favoritedBy User[]    @relation("FavoriteSong")
+  playlists   Playlist[]
+  comments    Comment[]
+}
+
+model Artist {
+  id           Int       @id @default(autoincrement())
+  name         String
+  apiId        String    // ID del artista en la API externa
+  followers    User[]
+  songs        Song[]
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  content     String    
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt      
+  userId      Int
+  songId      Int
+  user        User      @relation(fields: [userId], references: [id],onDelete: Cascade)
+  song        Song      @relation(fields: [songId], references: [id],onDelete: Cascade)
+}
+>>>>>>> 8067686e3ad2fe5c0bd992cfac7614a1793b54f4
