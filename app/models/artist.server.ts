@@ -1,21 +1,23 @@
-import db from "../db.server";
+import { PrismaClient } from "@prisma/client";
 
-export function getAllArtists(){
+const db = new PrismaClient()
+
+export function getAllArtists() {
     return db.user.findMany({
-        orderBy:{
-            id:"asc",
+        orderBy: {
+            id: "asc",
         }
     });
-} 
-
-export function getUserById(query:string|null){
-    return db.user.findUnique({
-        where:{
-            username:{
-                contains: query ?? null,
-                mode: "insensitive",
-            }
-        }
-    }
-    );
 }
+
+// export function getUserById(query: string | null) {
+//     return db.user.findUnique({
+//         where: {
+//             id: {
+//                 contains: query ?? null,
+//                 mode: "insensitive",
+//             }
+//         }
+//     }
+//     );
+// }
