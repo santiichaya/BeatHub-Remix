@@ -1,7 +1,7 @@
-import { Links, Meta, Outlet } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import { Links, Meta, Outlet, useRouteError } from "@remix-run/react";
+import type { ErrorResponse, LinksFunction } from "@remix-run/node";
 
-import tailwindCSSURL from "./tailwind.css";
+import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
 import { Container } from "postcss";
 import { ContainerPlayList } from "./components/ContainerPlayList.tsx";
@@ -30,11 +30,11 @@ export function Layout({children}:{children: React.ReactNode}) {
         <Links />
       </head>
       <body>
-        <>
           <nav>
             <Header />
           </nav>
-        </>
+          <h1 className="titulo"></h1>
+          {children}
       </body>
     </html>
   );
@@ -45,6 +45,8 @@ export default function App() {
 }
 
 export function ErrorBoundary() {
+  const error = useRouteError() as ErrorResponse;
+
   return (
     <html lang="en">
       <head>
@@ -56,13 +58,15 @@ export function ErrorBoundary() {
       <body>
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
           <div className="text-center p-8 bg-white rounded-lg shadow-md">
-            <h1 className="text-6xl font-bold text-gray-800 mb-4">404</h1>
+            <h1 className="text-6xl font-bold text-gray-800 mb-4">Oops!</h1>
             <h2 className="text-2xl font-semibold text-gray-600 mb-4">
-              ¡Página no encontrada!
+              {error.statusText}  {error.status}
             </h2>
-            <p className="text-gray-500 mb-8">
-              Lo sentimos, la página que estás buscando no existe.
-            </p>
+            {error.status == 404 && 
+              <p className="text-gray-500 mb-8">
+                Lo sentimos, la página que estás buscando no existe.
+              </p>
+            }
             <a
               href="/"
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
