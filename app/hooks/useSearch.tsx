@@ -1,7 +1,7 @@
 // src/hooks/useSearch.tsx:
 import { useState, useEffect } from 'react';
 import {resultsong, resultartist } from '../data/repoMusica';
-import {getAllArtists,getArtistById} from '~/models/artist.server'
+import {searchArtists,getArtistById} from '~/models/artist.server'
 import { getAllSongs,getSongById } from '~/models/song.server';
 
 export function useSearch(query: string) {
@@ -18,7 +18,7 @@ export function useSearch(query: string) {
             );
 
             // Filtrar artistas que coincidan con el nombre
-            const filteredArtists = getAllArtists().filter((artist: { name: string; }) =>
+            const filteredArtists = searchArtists().filter((artist: { name: string; }) =>
                 artist.name.toLowerCase().includes(lowercasedQuery)
             );
 
