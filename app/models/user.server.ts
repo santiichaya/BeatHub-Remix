@@ -33,11 +33,11 @@ export function createUser(username:string,email:string,time:number,favoriteSong
     })
 }
 
-export function deleteShelf(shelfId: string) {
+export function deleteUser(id: number) {
     return handleDelete(() =>
       db.pantryShelf.delete({
         where: {
-          id: shelfId,
+          id: id,
         },
       })
     );

@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 
-export async function handleDelete<T>(deleteFn:()=>T){
+export function handleDelete<T>(deleteFn:()=>T){
     try{
-        const deleted= await deleteFn;
+        const deleted=deleteFn;
         return deleted;
     }catch(error){
         if(error instanceof Prisma.PrismaClientKnownRequestError){
