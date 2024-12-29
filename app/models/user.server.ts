@@ -1,4 +1,5 @@
 import db from "../db.server";
+import { handleDelete } from "./utils";
 
 export function getAllUsers(){
     return db.user.findMany({
@@ -19,3 +20,26 @@ export function getUserById(query:string|null){
     }
     );
 }
+
+export function createUser(username:string,email:string,time:number,favoriteSongId:number|null=null){
+    db.user.create({
+        data:{
+            username,
+            email,
+            time,
+            favoriteSongId,
+        }
+
+    })
+}
+
+export function deleteShelf(shelfId: string) {
+    return handleDelete(() =>
+      db.pantryShelf.delete({
+        where: {
+          id: shelfId,
+        },
+      })
+    );
+  }
+  
