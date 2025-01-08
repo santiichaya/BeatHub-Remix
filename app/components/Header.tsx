@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import HomeButton from './HomeButton.js';
 import SearchButton from './SearchButton.js';
 
+import logo from '../assets/onlyLogo.png'
+
 function Header() {
     return (
         <div className="fixed bg-header h-full w-auto top-0 left-0 z-1000 flex flex-col items-center justify-between p-4">
