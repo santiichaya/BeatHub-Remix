@@ -1,6 +1,15 @@
 import db from "../db.server";
 import { handleDelete } from "./utils";
 
+
+export function getUser(email: string) {
+    return db.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
+
 export function getAllUsers(){
     return db.user.findMany({
         orderBy:{
@@ -33,13 +42,19 @@ export function createUser(username:string,email:string,time:number,favoriteSong
     })
 }
 
-export function deleteUser(id: number) {
-    return handleDelete(() =>
-      db.pantryShelf.delete({
-        where: {
-          id: id,
-        },
-      })
-    );
+export function deleteUser(email: string) {
+    return handleDelete(async() =>{
+        const user=await getUser(email);
+
+        if(!user){
+            return null;
+        }
+
+        db.user.delete({
+            where: {
+              email: email,
+            },
+          });
+    });
   }
-  
+
