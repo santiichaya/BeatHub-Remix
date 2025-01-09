@@ -30,7 +30,7 @@ export function getUserById(query:string|null){
     );
 }
 
-export function createUser(username:string,email:string,time:number,favoriteSongId:number|null=null){
+export function createUser(username:string,email:string,time:number=0,favoriteSongId:number|null=null){
     db.user.create({
         data:{
             username,
