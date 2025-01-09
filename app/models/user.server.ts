@@ -16,29 +16,16 @@ export function getAllUsers(){
             id:"asc",
         }
     });
-} 
-
-export function getUserById(query:string|null){
-    return db.user.findUnique({
-        where:{
-            username:{
-                contains: query ?? null,
-                mode: "insensitive",
-            }
-        }
-    }
-    );
 }
 
 export function createUser(username:string,email:string,time:number=0,favoriteSongId:number|null=null){
-    db.user.create({
+   return db.user.create({
         data:{
             username,
             email,
             time,
             favoriteSongId,
         }
-
     })
 }
 
