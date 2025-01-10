@@ -1,14 +1,12 @@
 import { Song } from "../components/Song";
-import data from '../data/data.json';
-import { getPlaylistById, getSongById } from "../data/repoMusica"
 import { useParams } from "react-router-dom";
 
 export function Display() {
-    const { id } = useParams(); // Obtener el ID de la URL
+    /* const { id } = useParams(); // Obtener el ID de la URL
     const idPlayList = Number(id); // Convertir a número
     const playlist = getPlaylistById(idPlayList);
-    const canciones = data.songs;
-    let tiempo_total = 0;
+    const canciones = data.songs; */
+    /* let tiempo_total = 0; */
     //Para saber el tiempo total de la PlayList
     playlist?.songs.map((id) => {
         const cancion = getSongById(id);
