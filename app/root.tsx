@@ -29,7 +29,7 @@ export function Layout({children}:{children: React.ReactNode}) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-primary">
           <nav>
             <Header />
           </nav>
@@ -56,14 +56,14 @@ export function ErrorBoundary() {
         <Links />
       </head>
       <body>
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-          <div className="text-center p-8 bg-white rounded-lg shadow-md">
-            <h1 className="text-6xl font-bold text-gray-800 mb-4">404</h1>
-            <h2 className="text-2xl font-semibold text-gray-600 mb-4">
+        <div className="min-h-screen flex items-center justify-center bg-primary">
+          <div className="text-center p-8 bg-secondary rounded-lg shadow-md">
+            <h1 className="text-6xl font-bold text-gray-100 mb-4">404</h1>
+            <h2 className="text-2xl font-semibold text-gray-100 mb-4">
               ¡Página no encontrada!
             </h2>
             {error.status == 404 && 
-              <p className="text-gray-500 mb-8">
+              <p className="text-black mb-8">
                 Lo sentimos, la página que estás buscando no existe.
               </p>
             }
