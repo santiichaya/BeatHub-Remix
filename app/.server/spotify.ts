@@ -16,7 +16,7 @@ export async function getSpotifyToken() {
     // 1. Si ya existe un token almacenado.
     // 2. Si la última vez que se obtuvo el token fue dentro de los últimos 30 minutos.
 
-    if (tokenPedidoHaceMenosDeMediaHora) { 
+    if (tokenPedidoHaceMenosDeMediaHora) {
         return token; 
         // Si el token es válido y fue obtenido hace menos de 30 minutos, lo reutiliza devolviéndolo.
         // Esto evita realizar una nueva solicitud a la API de Spotify.

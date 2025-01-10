@@ -1,26 +1,28 @@
-import { useLoaderData } from "@remix-run/react";
-import { searchArtists } from "~/models/artist.server";
+import { useLoaderData } from '@remix-run/react';
+import SearchBar from '~/components/SearchBar';
+import SearchResults from '~/components/SearchResults';
+import { search } from '~/models/search.server';
 
-interface Artist { // Al menos esto de momento pa que no se queje.
-    id: string
-    name: string 
-}
+export const loader = async ({ request }: { request: Request }) => {
+    const url = new URL(request.url);
+    const query = url.searchParams.get('q'); // Obtener el valor del parámetro `q`.
 
-export const loader = async () => {
-    const artists: Artist[] = await searchArtists('Paco')
-    console.log(artists)
-    return { artists }
+    if (!query) return { artists: [], albums: [] };
+
+    const result = await search(query); // Llamada a la función de búsqueda.
+    return {
+        artists: result.artists.items,
+        albums: result.albums.items,
+    };
 };
 
 export default function SearchPage() {
-    const { artists } = useLoaderData<typeof loader>()
+    const { artists, albums } = useLoaderData<typeof loader>();
 
     return (
-        <>
-            <h1>Página de búsqueda. Prueba con artistas por 'Paco'</h1>
-            <ul>
-                {artists.map(a => <li key={a.id}>{a.name}</li>)}
-            </ul>
-        </>
-    )
+        <div className="search-page">
+            <SearchBar />
+            <SearchResults artists={artists} albums={albums} />
+        </div>
+    );
 }
