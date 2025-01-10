@@ -1,23 +1,42 @@
-import { ActionFunction, LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
-import {createUser} from "../models/user.server";
+import { ActionFunction, LoaderFunction } from "@remix-run/node";
+import {useFetcher, useLoaderData } from "@remix-run/react";
+import {createUser, deleteUser, getAllUsers, } from "../models/user.server";
+import React from "react";
+import { User } from "@prisma/client";
+import { DeleteIcon } from "~/components/icons";
 
-export const loader:LoaderFunction=async({request}:LoaderFunctionArgs)=>{
-    const formData=await request.formData();
 
+export const loader:LoaderFunction=async()=>{
+  try {
+    const usuarios= await getAllUsers();
+    return usuarios;
+  } catch (error) {
+      console.log(error);
+  }
 };
 
 export const action: ActionFunction = async ({ request }) => {
   try {
-    const formData = await request.formData();
-    const username = formData.get("username") as string;
-    const email = formData.get("email") as string;
-    
-    // Llamar a la función createUser
-    await createUser(username, email);
-    
-    console.log("Usuario creado:", username, email);
-    return null; // Redirigir o devolver algún tipo de respuesta
+    const datosFormulario = await request.formData();
+    switch(datosFormulario.get("_action")){
+      case "crear":{
+        const username=datosFormulario.get("username") as string;
+        const email=datosFormulario.get("email") as string;
+        console.log("Creado con éxito!!!!");
+        console.log(username);
+        console.log(email);
+        return createUser(username,email);
+      }
+      case "eliminar":{
+        const id=Number(datosFormulario.get("id_usuario"));
+        console.log("Borrado con éxito!!!!");
+        console.log(id);
+        return deleteUser(id);
+      }
+      default:{
+        return null;
+      }
+    }
   } catch (error) {
     console.error("Error al crear el usuario:", error);
     return new Response("Error al crear el usuario", { status: 500 });
@@ -27,12 +46,37 @@ export const action: ActionFunction = async ({ request }) => {
 
 
 export default function Index() {
+  const usuarios=useLoaderData<typeof loader>();
   const createUserFetcher=useFetcher();
   return(
-    <createUserFetcher.Form method="post">
-      <input type="text" name="username"/>
-      <input type="email" name="email"/>
-      <input type="submit"/>
-    </createUserFetcher.Form>
+    <React.Fragment>
+       <createUserFetcher.Form method="post">
+          <input type="text" name="username"/>
+          <input type="email" name="email"/>
+          <input type="submit" name="_action" value="crear"/>
+      </createUserFetcher.Form>
+      <div>
+          <h2>El usuario que tenemos ahora mismo es:</h2>
+          {usuarios.map((usuario:User)=>{
+            return(
+              <React.Fragment key={usuario.id}>
+                <ul>
+                  <li>Username: {usuario.username}</li>
+                  <li>Email: {usuario.email}</li>
+                  <li>Fecha de registro: {new Date(usuario.createdAt).toLocaleDateString()}</li>
+                  <li>Tiempo en la aplicación: {usuario.time}</li>
+                  <li>Canción favorita: {usuario.favoriteSongId}</li>
+                </ul>
+                <createUserFetcher.Form method="post">
+                <button type="submit" name="_action" value="eliminar">
+                  <DeleteIcon/>
+                </button>
+                <input type="hidden" name="id_usuario" value={usuario.id}/>
+                </createUserFetcher.Form>
+              </React.Fragment>
+            );
+          })}   
+      </div>
+    </React.Fragment>
   );
 }
