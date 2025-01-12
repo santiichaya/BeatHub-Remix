@@ -4,6 +4,7 @@ import {createUser, deleteUser, getAllUsers, } from "../models/user.server";
 import React from "react";
 import { User } from "@prisma/client";
 import { DeleteIcon } from "~/components/icons";
+import { generate_hash } from "~/utils/hash";
 
 
 export const loader:LoaderFunction=async()=>{
@@ -22,10 +23,13 @@ export const action: ActionFunction = async ({ request }) => {
       case "crear":{
         const username=datosFormulario.get("username") as string;
         const email=datosFormulario.get("email") as string;
+        const password=datosFormulario.get("password") as string;
+        const passwordHash= await generate_hash(password);
         console.log("Creado con éxito!!!!");
         console.log(username);
+        console.log(password);
         console.log(email);
-        return createUser(username,email);
+        return createUser(username,passwordHash,email);
       }
       case "eliminar":{
         const id=Number(datosFormulario.get("id_usuario"));
@@ -52,6 +56,7 @@ export default function Index() {
     <React.Fragment>
        <createUserFetcher.Form method="post">
           <input type="text" name="username"/>
+          <input type="password" name="password"/>
           <input type="email" name="email"/>
           <input type="submit" name="_action" value="crear"/>
       </createUserFetcher.Form>

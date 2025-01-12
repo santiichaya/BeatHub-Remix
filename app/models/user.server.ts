@@ -10,6 +10,15 @@ export function getUser(id:number) {
     });
   }
 
+  export function getUserByUsername(username:string) {
+    return db.user.findUnique({
+      where: {
+        username,
+      },
+    });
+  }
+
+
 export function getAllUsers(){
     return db.user.findMany({
         orderBy:{
@@ -18,7 +27,7 @@ export function getAllUsers(){
     });
 }
 
-export function createUser(username:string,email:string,password:string="p",time:number=0){
+export function createUser(username:string,password:string,email:string,time:number=0){
    return db.user.create({
         data:{
             username,
