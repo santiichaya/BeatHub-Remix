@@ -18,13 +18,13 @@ export function getAllUsers(){
     });
 }
 
-export function createUser(username:string,email:string,time:number=0,favoriteSongId:number|null=null){
+export function createUser(username:string,email:string,password:string="p",time:number=0){
    return db.user.create({
         data:{
             username,
+            password,
             email,
             time,
-            favoriteSongId,
         }
     })
 }
