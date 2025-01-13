@@ -5,12 +5,15 @@ import React from "react";
 import { User } from "@prisma/client";
 import { DeleteIcon } from "~/components/icons";
 import { generate_hash } from "~/utils/hash";
+import { getSession } from "~/utils/session";
 
 
-export const loader:LoaderFunction=async()=>{
+export const loader:LoaderFunction=async({request})=>{
   try {
     const usuarios= await getAllUsers();
-    return usuarios;
+    const cookieHeader=request.headers.get("cookie");
+    const session=await getSession(cookieHeader);
+    return ({usuarios,session});
   } catch (error) {
       console.log(error);
   }
@@ -50,7 +53,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 
 export default function Index() {
-  const usuarios=useLoaderData<typeof loader>();
+  const {usuarios,session}=useLoaderData<typeof loader>();
   const createUserFetcher=useFetcher();
   return(
     <React.Fragment>
@@ -61,6 +64,8 @@ export default function Index() {
           <input type="submit" name="_action" value="crear"/>
       </createUserFetcher.Form>
       <div>
+          <h2>Bienvenido a BeatHub {session.data.username}</h2>
+          <h2>El id del usuario que sea registrado es: {session.data.userId}</h2>
           <h2>El usuario que tenemos ahora mismo es:</h2>
           {usuarios.map((usuario:User)=>{
             return(
