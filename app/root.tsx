@@ -1,10 +1,8 @@
-import { Links, Meta, Outlet, useRouteError } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
 import type { ErrorResponse, LinksFunction } from "@remix-run/node";
 
 import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
-import { Container } from "postcss";
-import { ContainerPlayList } from "./components/ContainerPlayList.tsx";
 
 export const links: LinksFunction = () => [
   {rel:"stylesheet",href:tailwindCSSURL},
@@ -33,8 +31,8 @@ export function Layout({children}:{children: React.ReactNode}) {
           <nav>
             <Header />
           </nav>
-          <h1 className="titulo"></h1>
           {children}
+          <Scripts></Scripts>
       </body>
     </html>
   );

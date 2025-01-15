@@ -1,4 +1,4 @@
-import { ActionFunction, LoaderFunction} from '@remix-run/node';
+import { ActionFunction, LoaderFunction, redirect} from '@remix-run/node';
 import {useFetcher } from '@remix-run/react'
 import {getUserByUsername } from '~/models/user.server';
 import {verifyPassword } from '~/utils/hash';
@@ -19,11 +19,13 @@ export const action : ActionFunction =async ({request})=>{
     const username=datosFormulario.get("username") as string;
     const password=datosFormulario.get("password") as string;
     const user=await getUserByUsername(username);
+    console.log(user!.id);
+    console.log(user!.username);
     if(user!=null){
         if(await verifyPassword(password, user.password)){
             session.set("userId",user.id); //Añado con set datos a la sesión. Tengo que especificar clave valor.
             session.set("username",user.username); //Añado con set datos a la sesión. Tengo que especificar clave valor.
-            return Response.json("", {
+            return redirect("/",{
                 headers: {
                   "Set-Cookie": await commitSession(session), //Con commitSession confirmo los cambios y modifico la sesión.
                 },
@@ -44,7 +46,7 @@ export default function Login() {
             <label>Password
                 <input type="password" name="password"/>
             </label>
-            <button>Log in</button>
+            <button type="submit">Log in</button>
         </fetcherLogin.Form>
     </>
   )

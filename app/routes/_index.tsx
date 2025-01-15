@@ -61,7 +61,7 @@ export default function Index() {
           <input type="text" name="username"/>
           <input type="password" name="password"/>
           <input type="email" name="email"/>
-          <input type="submit" name="_action" value="crear"/>
+          <input type="submit" name="_action"/>
       </createUserFetcher.Form>
       <div>
           <h2>Bienvenido a BeatHub {session.data.username}</h2>
