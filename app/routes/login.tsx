@@ -1,6 +1,7 @@
 import { ActionFunction, LoaderFunction, redirect} from '@remix-run/node';
 import {NavLink, useFetcher } from '@remix-run/react'
 import { useState } from 'react';
+import { CloseEyeIcon, OpenEyeIcon } from '~/components/icons';
 import {getUserByUsername } from '~/models/user.server';
 import {verifyPassword } from '~/utils/hash';
 import { commitSession, getSession } from '~/utils/session';
@@ -42,7 +43,7 @@ export default function Login() {
   return (
     <div className='w-full h-full flex flex-col justify-center items-center gap-20'>
       <h1 className='text-4xl justify-self-start'>Inicia sesion!</h1>
-        <fetcherLogin.Form method="post" className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center'>
+        <fetcherLogin.Form method="post" className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-xl'>
             <label className='mt-6 w-full flex justify-between'>Username:
                 <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none'/>
             </label>
