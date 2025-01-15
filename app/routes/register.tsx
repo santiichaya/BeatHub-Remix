@@ -35,7 +35,7 @@ export default function Register() {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
             <h1 className='text-4xl justify-self-start'>Registrate!</h1>
-            <fetcherRegister.Form className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center'>
+            <fetcherRegister.Form className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-xl'>
                 <label className='mt-6 w-full flex justify-between'>Username:
                     <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none' />
                 </label>
@@ -44,7 +44,7 @@ export default function Register() {
                 </label>
                 <label className='mt-6 w-full flex justify-between relative'>Password:
                     <input type={inputype} name="contraseña" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none' />
-                    <button type="button" className='absolute right-[10px] top-[2px]' onMouseDown={() => setinputype("text")} onMouseLeave={() => setinputype("password")} onMouseUp={() => setinputype("password")}>{inputype == "text" ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
+                    <button type="button" className='absolute right-[10px] top-[4px]' onMouseDown={() => setinputype("text")} onMouseLeave={() => setinputype("password")} onMouseUp={() => setinputype("password")}>{inputype == "text" ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
                 </label>
                 <button className='mt-12 border-4 p-1 w-fit rounded-lg bg-slate-200 text-black'>Register</button>
             </fetcherRegister.Form>
