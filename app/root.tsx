@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, useRouteError } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
 import type { ErrorResponse, LinksFunction } from "@remix-run/node";
 
 import tailwindCSSURL from "./tailwind.css?url";
@@ -29,12 +29,14 @@ export function Layout({children}:{children: React.ReactNode}) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-primary">
+      <body className="bg-primary flex">
           <nav>
             <Header />
           </nav>
-          <h1 className="titulo"></h1>
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
+          <Scripts/>
       </body>
     </html>
   );
