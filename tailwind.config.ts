@@ -5,9 +5,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': '#242424',
-        'secondary': '#247BA0',
-        'header': '#5c5c5c'
+        'primary': '#000000',
+        'secondary': '#D81159', //E0479E, ED254E, 4DA1A9
+        'header': '#FFFFFF'
       },
       fontFamily: {
         sans: [
