@@ -1,34 +1,11 @@
 import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
 import { NavLink, useFetcher } from '@remix-run/react'
 import { useState } from 'react';
-import { z } from 'zod';
 import { CloseEyeIcon, OpenEyeIcon } from '~/components/icons';
 import { getUserByUsername } from '~/models/user.server';
 import { verifyPassword } from '~/utils/hash';
 import { commitSession, getSession } from '~/utils/session';
 
-const badWords = [
-  "polla", "coño", "puta", "gilipollas", "cabrón", "mierda",
-  "zorra", "maricón", "puto", "imbécil", "estúpido", "culo",
-  "cojones", "follar"];
-
-//Función para eliminar tildes
-const removeAccents = (str: string) => {
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); //Normalize con el valor NFD lo que hace es tratar a las tildes 
-};
-
-const LoginSchema = z.object({
-  username: z.string().min(1, "No puede estar vacío el campo"),
-  email: z.string().min(1, "No puedes dejar vacío el email").email(),
-  password: z.string().min(1, "No puedes dejarlo vacío")
-    .refine((password) => password.length<=16, { message: "Debe tener al menos 8 caracteres" })
-    .refine((password) => /[A-Z]/.test(password), { message: "Debe tener al menos una mayúscula" })
-    .refine((password) => /\d/.test(password), { message: "Debe tener al menos un número" })
-    .refine((password) => !/\s/.test(password), { message: "No debe contener espacios" })
-    .refine((password) => !["123456", "password", "qwerty"].includes(password), { message: "La contraseña es demasiado común" })
-    .transform((password) => removeAccents(password.toLowerCase()))
-    .refine((password) => !badWords.some((word: string) => password.includes(word)), { message: "No utilices palabras malsonantes" })
-});
 
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -64,7 +41,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login() {
   const fetcherLogin = useFetcher();
   const [password, setPassword] = useState<string>("");
-  const [typetext, setInputType] = useState<string>('password');
+  const [inputType, setInputType] = useState<string>('password');
 
   function validatePassword(event: React.ChangeEvent<HTMLInputElement>) {
 
@@ -80,8 +57,8 @@ export default function Login() {
                 <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1'/>
             </label>
             <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Password:
-            <input type={typetext} name="password" value={password} onChange={validatePassword} className='w-[60%] border-2 rounded focus:outline-none p-1' />
-                <button type='button' className='absolute right-[10px] top-[7px]' onMouseDown={()=>setInputType('text')} onMouseUp={()=>setInputType('password')} onMouseLeave={()=>setInputType('password')}>{typetext==='text' ?(<OpenEyeIcon/>):(<CloseEyeIcon/>)}</button>
+            <input type={inputType} name="password" value={password} onChange={validatePassword} className='w-[60%] border-2 rounded focus:outline-none p-1' />
+                <button type='button' className='absolute right-[10px] top-[7px]' onMouseDown={()=>setInputType('text')} onMouseUp={()=>setInputType('password')} onMouseLeave={()=>setInputType('password')}>{inputType==='text' ?(<OpenEyeIcon/>):(<CloseEyeIcon/>)}</button>
             </label>
             <button className='mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]'>Log in</button>
         </fetcherLogin.Form>
