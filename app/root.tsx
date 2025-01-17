@@ -3,11 +3,9 @@ import type { ErrorResponse, LinksFunction } from "@remix-run/node";
 
 import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
-import { Container } from "postcss";
-import { ContainerPlayList } from "./components/ContainerPlayList.tsx";
 
 export const links: LinksFunction = () => [
-  {rel:"stylesheet",href:tailwindCSSURL},
+  { rel: "stylesheet", href: tailwindCSSURL },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -20,7 +18,7 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export function Layout({children}:{children: React.ReactNode}) {
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -30,13 +28,13 @@ export function Layout({children}:{children: React.ReactNode}) {
         <Links />
       </head>
       <body className="bg-primary flex">
-          <nav>
-            <Header />
-          </nav>
-          <main className="flex-1">
-            {children}
-          </main>
-          <Scripts/>
+        <nav>
+          <Header />
+        </nav>
+        <main className="flex-1">
+          {children}
+        </main>
+        <Scripts />
       </body>
     </html>
   );
@@ -64,7 +62,7 @@ export function ErrorBoundary() {
             <h2 className="text-2xl font-semibold text-gray-100 mb-4">
               ¡Página no encontrada!
             </h2>
-            {error.status == 404 && 
+            {error.status == 404 &&
               <p className="text-black mb-8">
                 Lo sentimos, la página que estás buscando no existe.
               </p>
