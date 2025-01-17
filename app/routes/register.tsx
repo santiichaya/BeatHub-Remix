@@ -77,7 +77,7 @@ export default function Register() {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
             <h1 className='text-4xl justify-self-start'>Registrate!</h1>
-            <fetcherRegister.Form className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-xl' method="post">
+            <fetcherRegister.Form className='bg-secondary w-[45%] h-[60%] flex flex-col p-10 rounded-2xl items-center justify-evenly text-2xl' method="post">
                 <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>Usuario:
                     <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12' />
                 </label>
@@ -85,10 +85,10 @@ export default function Register() {
                     <input type="email" name="email" placeholder="ejemplo@gmail.com" pattern="[a-z0-9._%+-]+@[a-z0-9-]+\.[a-z]{2,}$" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12' />
                 </label>
                 <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Contraseña:
-                <input type={inputType} name="password" value={password} onChange={validatePassword} className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12' />
+                <input type={inputType} name="password" value={password} onChange={validatePassword} className={`w-[60%] border-2 rounded focus:outline-none p-1 ${inputType === "text" ? "text-xl h-11" : "text-3xl h-11"}`} />
                     <button type="button" className='absolute right-[10px]' onMouseDown={() => setInputType("text")} onMouseLeave={() => setInputType("password")} onMouseUp={() => setInputType("password")}>{inputType == "text" ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
                 </label>
-                <button className='mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]'>Registrarme</button>
+                <button className='mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[20rem]'>Registrarme</button>
             </fetcherRegister.Form>
             <p>¿Ya tienes cuenta? <NavLink to={"../login"} className='underline'>Iniciar sesion</NavLink></p>
         </div>
