@@ -99,7 +99,7 @@ export default function Register() {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
             <h1 className='text-4xl justify-self-start'>Registrate!</h1>
-            <fetcherRegister.Form className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-xl' method="post">
+            <fetcherRegister.Form className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl' method="post">
                 <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>Usuario:
                     <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12' />
                 </label>
@@ -108,7 +108,7 @@ export default function Register() {
                 </label>
                 <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Contraseña:
                     <div className="relative w-[60%]">
-                        <input type={inputType} name="password" value={password} onChange={validatePassword} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} className="w-full border-2 rounded border-slate-200 focus:outline-none p-1 h-12" />
+                        <input type={inputType} name="password" value={password} onChange={validatePassword}  className={`w-[60%] border-2 rounded focus:outline-none p-1 ${inputType === "text" ? "text-xl h-11" : "text-3xl h-11"}`}/>
                         <button type="button" className="absolute right-2 top-1/2 transform -translate-y-1/2"
                             onMouseDown={() => setInputType("text")} onMouseLeave={() => setInputType("password")} onMouseUp={() => setInputType("password")}>{inputType == "text" ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}
                         </button>
