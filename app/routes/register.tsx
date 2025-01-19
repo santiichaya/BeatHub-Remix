@@ -2,7 +2,7 @@ import { ActionFunction, redirect } from "@remix-run/node";
 import { NavLink, useFetcher } from "@remix-run/react";
 import React, { useState } from "react";
 import { z } from "zod";
-import { AcceptedIcon, CheckedIcon, CloseEyeIcon, OpenEyeIcon, RejectedIcon } from "~/components/icons";
+import { AcceptedIcon, CloseEyeIcon, OpenEyeIcon, RejectedIcon } from "~/components/icons";
 import { createUser, getUserByUsername } from "~/models/user.server";
 import { generate_hash } from "~/utils/hash";
 import { commitSession, getSession } from "~/utils/session";
@@ -70,7 +70,6 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-    //Quiero hacer un array con todas las validaciones del passwordSchema
     const passwordValidations = [
         "Debe tener al menos 8 caracteres",
         "No debe sobrepasar los 16 caracteres",
@@ -82,53 +81,102 @@ export default function Register() {
     ];
     const fetcherRegister = useFetcher();
     const [password, setPassword] = useState<string>("");
-    const [inputType, setInputType] = useState<string>('password');
+    const [inputType, setInputType] = useState<string>("password");
     const [isFocused, setIsFocused] = useState<boolean>(false);
-    const [passwordErrors,setPasswordErrors]=useState<Array<string>>(["Debe tener al menos 8 caracteres","Debe tener al menos una mayúscula","Debe tener al menos un número"]);
+    const [passwordErrors, setPasswordErrors] = useState<Array<string>>([
+        "Debe tener al menos 8 caracteres",
+        "Debe tener al menos una mayúscula",
+        "Debe tener al menos un número",
+    ]);
 
     function validatePassword(event: React.ChangeEvent<HTMLInputElement>) {
         const validation = passwordSchema.safeParse(event.target.value);
-        if(!validation.success){
-            const erroresdeZod=validation.error?.errors.map(er=>er.message); //Extraigo solo los mensajes de error para saber cuales son y los meto en el estado. validation.error es un objeto error que tiene una propiedad errors que es un array de objetos que contiene todos los errores, donde cada objeto representa un error de zod y por último, lo que hago es un map de errors para poder sacar cada mensaje de error de cada objeto.
+        if (!validation.success) {
+            const erroresdeZod = validation.error?.errors.map((er) => er.message);
+            //Extraigo solo los mensajes de error para saber cuales son y los meto en el estado. validation.error es un objeto error que tiene una propiedad errors que es un array de objetos que contiene todos los errores, donde cada objeto representa un error de zod y por último, lo que hago es un map de errors para poder sacar cada mensaje de error de cada objeto.
             setPasswordErrors(erroresdeZod);
-        }else{
+        } else {
             setPasswordErrors([]);
         }
         setPassword(event.target.value);
     }
+
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
-            <h1 className='text-4xl justify-self-start'>Registrate!</h1>
-            <fetcherRegister.Form className='bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl' method="post">
-                <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>Usuario:
-                    <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12' />
+            <h1 className="text-4xl">¡Regístrate!</h1>
+            <fetcherRegister.Form
+                className="bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl"
+                method="post"
+            >
+                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
+                    Usuario:
+                    <input
+                        type="text"
+                        name="username"
+                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                    />
                 </label>
-                <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>Email:
-                    <input type="email" name="email" placeholder="ejemplo@gmail.com" pattern="[a-z0-9._%+-]+@[a-z0-9-]+\.[a-z]{2,}$" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12' />
+                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
+                    Email:
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="ejemplo@gmail.com"
+                        pattern="[a-z0-9._%+-]+@[a-z0-9-]+\\.[a-z]{2,}$"
+                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                    />
                 </label>
-                <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Contraseña:
-                    <div className="relative w-[60%]">
-                        <input type={inputType} name="password" value={password} onChange={validatePassword} onFocus={()=>setIsFocused(true)}
-                        onBlur={()=>setIsFocused(false)}  className={`w-[60%] border-2 rounded focus:outline-none p-1 ${inputType === "text" ? "text-xl h-11" : "text-3xl h-11"}`}/>
-                        <button type="button" className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                            onMouseDown={() => setInputType("text")} onMouseLeave={() => setInputType("password")} onMouseUp={() => setInputType("password")}>{inputType == "text" ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}
-                        </button>
-                        {isFocused && (
-                            <div className="absolute top-[110%] left-0 w-full bg-gray-100 border border-gray-300 rounded-lg p-2 shadow-lg">
-                                <ul className="text-[0.6rem] text-gray-700">
-                                    {passwordValidations.map((validation, index) => (
-                                            <li key={index} className="flex flex-col gap-2">{validation}
-                                            {passwordErrors.includes(validation)?(<RejectedIcon/>):(<AcceptedIcon />)}
-                                            </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
+                <label className="mt-6 w-full flex flex-col relative border-b border-black pb-4">
+                    <span className="flex justify-between items-center">
+                        Contraseña:
+                        <div className="relative w-[60%]">
+                            <input
+                                type={inputType}
+                                name="password"
+                                value={password}
+                                onChange={validatePassword}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
+                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 ${inputType === "text" ? "text-2xl" : "text-2xl"}`}
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                                onMouseDown={() => setInputType("text")}
+                                onMouseUp={() => setInputType("password")}
+                                onMouseLeave={() => setInputType("password")}
+                            >
+                                {inputType === "text" ? <OpenEyeIcon /> : <CloseEyeIcon />}
+                            </button>
+                        </div>
+                    </span>
+                    {isFocused && (
+                        <div className="absolute top-[110%] left-0 w-full bg-gray-100 border border-gray-300 rounded-lg p-2 shadow-lg">
+                            <ul className="text-sm text-gray-700 space-y-1">
+                                {passwordValidations.map((validation, index) => (
+                                    <li key={index} className="flex justify-between items-center">
+                                        <span>{validation}</span>
+                                        {passwordErrors.includes(validation) ? (
+                                            <RejectedIcon />
+                                        ) : (
+                                            <AcceptedIcon />
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </label>
-                <button className='mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]'>Registrarme</button>
+                <button className="mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]">
+                    Registrarme
+                </button>
             </fetcherRegister.Form>
-            <p>¿Ya tienes cuenta? <NavLink to={"../login"} className='underline'>Iniciar sesion</NavLink></p>
+            <p>
+                ¿Ya tienes cuenta?{" "}
+                <NavLink to={"../login"} className="underline">
+                    Iniciar sesión
+                </NavLink>
+            </p>
         </div>
-    )
+    );
 }
