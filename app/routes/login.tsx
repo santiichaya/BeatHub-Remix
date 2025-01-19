@@ -44,7 +44,6 @@ export default function Login() {
   const [inputType, setInputType] = useState<string>('password');
 
   function validatePassword(event: React.ChangeEvent<HTMLInputElement>) {
-
     setPassword(event.target.value);
   }
 
