@@ -3,6 +3,7 @@ import type { ErrorResponse, LinksFunction } from "@remix-run/node";
 
 import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindCSSURL },
@@ -27,15 +28,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-primary flex">
-        <nav>
+      <body className="bg-primary min-h-screen flex flex-col">
+        <div className="flex flex-1">
           <Header />
-        </nav>
-        <main className="flex-1">
-          {children}
-        </main>
+          <main className="flex-1 overflow-y-auto ml-24">{children}</main>
+        </div>
+        <Footer/>
         <Scripts />
       </body>
+
     </html>
   );
 }
