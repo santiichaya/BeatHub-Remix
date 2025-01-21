@@ -1,6 +1,6 @@
 function HomeButton() {
     return (
-      <div className="w-[3.75rem] h-[3.75rem] rounded-full mb-20">
+      <div className="w-[3.75rem] h-[3.75rem] rounded-full md:mb-20">
         <button className="w-[3.75rem] h-[3.75rem]">
         <svg height="100%" style={{ fillRule: "evenodd"}}
       viewBox="0 0 32 32">

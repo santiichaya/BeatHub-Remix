@@ -29,17 +29,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-primary min-h-screen flex flex-col">
-        <div className="flex flex-1">
-          <Header />
-          <main className="flex-1 overflow-y-auto ml-24">{children}</main>
+        <div className="flex flex-col md:flex-row h-screen">
+            <Header />
+          <main className=" text-white md:ml-20 w-full" >
+            {children}
+          </main>
         </div>
-        <Footer/>
+        <Footer />
         <Scripts />
       </body>
-
     </html>
   );
 }
+
+
 
 export default function App() {
   return <Outlet />;

@@ -1,15 +1,15 @@
 function Footer() {
-    return (
-      <div className="bg-secondary w-full text-center py-4 mt-auto">
-        <div>© 2025 Beathub. Todos los derechos reservados.</div>
-        <div>instagram</div>
-        <div>gmail</div>
-        <div>telefono</div>
-        <div>X</div>
-        <div>correo</div>
+  return (
+    <div className="bg-secondary text-center text-white md:ml-20 mt-12">
+      <div className="flex flex-wrap w-[100%] justify-center">
+        <div className="w-[25%] bg-green-600 m-0">cuarto</div>
+        <div className="w-[25%] bg-blue-600 m-0">cuarto</div>
+        <div className="w-[25%] bg-red-600 m-0">cuarto</div>
+        <div className="w-[25%] bg-yellow-600 m-0">cuarto</div>
+        <p>© 2025 Beathub. Todos los derechos reservados.</p>
       </div>
-    );
-  }
-  
-  export default Footer;
-  
+    </div>
+  );
+}
+
+export default Footer;
