@@ -51,9 +51,15 @@ export default function Login() {
     <div className='w-full h-full flex flex-col justify-center items-center gap-20'>
       <h1 className='text-4xl justify-self-start'>Inicia sesion!</h1>
 
-        <fetcherLogin.Form method="post" className='bg-secondary w-[45%] h-[60%] flex flex-col p-10 rounded-2xl items-center justify-evenly text-2xl'>
-            <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>Username:
-                <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1'/>
+        <fetcherLogin.Form 
+        method="post" 
+        className='bg-secondary w-[45%] h-[60%] flex flex-col p-10 rounded-2xl items-center justify-evenly text-2xl'>
+            <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>
+            Username:
+                <input 
+                type="text" 
+                name="username" 
+                className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1'/>
             </label>
             <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Password:
             <input type={inputType} name="password" value={password} onChange={validatePassword} className={`w-[60%] border-2 rounded focus:outline-none p-1 ${inputType === "text" ? "text-xl h-11" : "text-3xl h-11"}`} />

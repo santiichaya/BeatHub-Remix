@@ -1,11 +1,12 @@
-import { ActionFunction, redirect } from "@remix-run/node";
-import { NavLink, useFetcher } from "@remix-run/react";
-import React, { useState } from "react";
+import { ActionFunction, json, redirect } from "@remix-run/node";
+import { NavLink, useActionData, useFetcher } from "@remix-run/react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { AcceptedIcon, CloseEyeIcon, OpenEyeIcon, RejectedIcon } from "~/components/icons";
 import { createUser, getUserByUsername } from "~/models/user.server";
 import { generate_hash } from "~/utils/hash";
 import { commitSession, getSession } from "~/utils/session";
+import { validateForm } from "~/utils/validateform";
 
 const badWords = [
     "polla", "coño", "puta", "gilipollas", "cabrón", "mierda",
@@ -36,37 +37,50 @@ const RegisterSchema = z.object({
 
 
 export const action: ActionFunction = async ({ request }) => {
-    const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
-    const session = await getSession(cookieHeader); //Obtengo la sesión.
-    console.log(session);
-    try {
-        const datosFormulario = await request.formData();
-        const username = datosFormulario.get("username") as string;
-        let user = await getUserByUsername(username);
-        if (user === null) {
-            const email = datosFormulario.get("email") as string;
-            console.log(email);
-            const password = datosFormulario.get("password") as string;
-            console.log(password);
-            const passwordHash = await generate_hash(password);
-            await createUser(username, passwordHash, email);
-            console.log("Antes de obtenerlo:", user);
-            user = await getUserByUsername(username);
-            console.log(user);
-            session.set("userId", user!.id);
-            session.set("username", user!.username);
-            return redirect("/", {
-                headers: {
-                    "Set-Cookie": await commitSession(session) //Confirmar cambios
+    const datosFormulario = await request.formData();
+    return validateForm(
+        datosFormulario,
+        RegisterSchema,
+        async ({ username, email, password }) => { //Aquí puedo sacar directamente los name del formulario porque el validateForm devuelve en caso de éxito la función exitosa teniendo como párametro el objeto que le pasaste a zod ya validado y ajustado según el schema.
+            let user = await getUserByUsername(username);
+            if (user === null) {
+                const passwordHash = await generate_hash(password);
+                await createUser(username, passwordHash, email);
+                user = await getUserByUsername(username);
+                const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
+                const session = await getSession(cookieHeader); //Obtengo la sesión.
+                session.set("userId", user!.id);
+                session.set("username", user!.username);
+                return redirect("/", {
+                    headers: {
+                        "Set-Cookie": await commitSession(session) //Confirmar cambios
+                    }
+                });
+            }else{
+                return new Response(JSON.stringify({ error:"Este usuario ya está registrado"}), 
+                {
+                    status: 500,
+                    headers: { 'Content-Type': 'application/json' },
+                  });
+            }
+        },
+        (errors) => {
+            const username = datosFormulario.get("username") || "";
+            const email = datosFormulario.get("email") || "";
+            const password = datosFormulario.get("password") || "";
+            return json(
+                {
+                  errors,
+                  u: username,
+                  e: email,
+                  pass: password,
+                },
+                {
+                  status: 400,
                 }
-            });
+              );
         }
-        return null
-
-    } catch (error) {
-        console.error("Error al crear el usuario:", error);
-        return new Response("Error al crear el usuario", { status: 500 });
-    }
+    );
 };
 
 export default function Register() {
@@ -79,6 +93,7 @@ export default function Register() {
         "La contraseña es demasiado común",
         "No utilices palabras malsonantes",
     ];
+    const actionData = useActionData<typeof action>();
     const fetcherRegister = useFetcher();
     const [password, setPassword] = useState<string>("");
     const [inputType, setInputType] = useState<string>("password");
@@ -92,7 +107,7 @@ export default function Register() {
     function validatePassword(event: React.ChangeEvent<HTMLInputElement>) {
         const validation = passwordSchema.safeParse(event.target.value);
         if (!validation.success) {
-            const erroresdeZod = validation.error?.errors.map((er) => er.message);
+            const erroresdeZod = validation.error.issues.map((er) => er.message);
             //Extraigo solo los mensajes de error para saber cuales son y los meto en el estado. validation.error es un objeto error que tiene una propiedad errors que es un array de objetos que contiene todos los errores, donde cada objeto representa un error de zod y por último, lo que hago es un map de errors para poder sacar cada mensaje de error de cada objeto.
             setPasswordErrors(erroresdeZod);
         } else {
@@ -100,6 +115,10 @@ export default function Register() {
         }
         setPassword(event.target.value);
     }
+
+    useEffect(() => {
+        console.log("Entreeeee", actionData);
+    }, [actionData]);
 
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
@@ -114,7 +133,9 @@ export default function Register() {
                         type="text"
                         name="username"
                         className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                        defaultValue={actionData?.username || ""}
                     />
+                    {actionData?.errors?.username && (<p>{actionData.errors.username}</p>)}
                 </label>
                 <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
                     Email:
@@ -122,9 +143,10 @@ export default function Register() {
                         type="email"
                         name="email"
                         placeholder="ejemplo@gmail.com"
-                        pattern="[a-z0-9._%+-]+@[a-z0-9-]+\\.[a-z]{2,}$"
                         className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                        defaultValue={actionData?.email || ""}
                     />
+                    {actionData?.errors?.email && (<p>{actionData.errors.email}</p>)}
                 </label>
                 <label className="mt-6 w-full flex flex-col relative border-b border-black pb-4">
                     <span className="flex justify-between items-center">
@@ -149,6 +171,7 @@ export default function Register() {
                                 {inputType === "text" ? <OpenEyeIcon /> : <CloseEyeIcon />}
                             </button>
                         </div>
+                        {actionData?.errors?.password && (<p>{actionData.errors.password}</p>)}
                     </span>
                     {isFocused && (
                         <div className="absolute top-[110%] left-0 w-full bg-gray-100 border border-gray-300 rounded-lg p-2 shadow-lg">
