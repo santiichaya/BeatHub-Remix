@@ -18,6 +18,14 @@ export function getUser(id:number) {
     });
   }
 
+  export function getUserByEmail(email:string){
+    return db.user.findUnique({
+      where:{
+        email,
+      },
+    })
+  }
+
 
 export function getAllUsers(){
     return db.user.findMany({
