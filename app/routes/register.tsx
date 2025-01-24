@@ -1,9 +1,9 @@
 import { ActionFunction, json, redirect } from "@remix-run/node";
-import { NavLink, useActionData, useFetcher } from "@remix-run/react";
+import { Form, NavLink, useActionData } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { AcceptedIcon, CloseEyeIcon, OpenEyeIcon, RejectedIcon } from "~/components/icons";
-import { createUser, getUserByUsername } from "~/models/user.server";
+import { createUser, getUserByEmail, getUserByUsername } from "~/models/user.server";
 import { generate_hash } from "~/utils/hash";
 import { commitSession, getSession } from "~/utils/session";
 import { validateForm } from "~/utils/validateform";
@@ -29,8 +29,8 @@ const passwordSchema = z.string().min(8, { message: "Debe tener al menos 8 carac
     .refine((password) => !badWords.some((word: string) => password.includes(word)), { message: "No utilices palabras malsonantes" });
 
 const RegisterSchema = z.object({
-    username: z.string().min(1, "No puede estar vacío el campo"),
-    email: z.string().min(1, "No puedes dejar vacío el email").email(),
+    username: z.string().min(1, "No puede estar vacío el username"),
+    email: z.string().min(1, "No puedes dejar vacío el email").email("El email no es válido"),
     password: passwordSchema,
 });
 
@@ -44,41 +44,48 @@ export const action: ActionFunction = async ({ request }) => {
         async ({ username, email, password }) => { //Aquí puedo sacar directamente los name del formulario porque el validateForm devuelve en caso de éxito la función exitosa teniendo como párametro el objeto que le pasaste a zod ya validado y ajustado según el schema.
             let user = await getUserByUsername(username);
             if (user === null) {
-                const passwordHash = await generate_hash(password);
-                await createUser(username, passwordHash, email);
-                user = await getUserByUsername(username);
-                const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
-                const session = await getSession(cookieHeader); //Obtengo la sesión.
-                session.set("userId", user!.id);
-                session.set("username", user!.username);
-                return redirect("/", {
-                    headers: {
-                        "Set-Cookie": await commitSession(session) //Confirmar cambios
+                user = await getUserByEmail(email);
+                if (user == null) {
+                    const passwordHash = await generate_hash(password);
+                    await createUser(username, passwordHash, email);
+                    user = await getUserByUsername(username);
+                    const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
+                    const session = await getSession(cookieHeader); //Obtengo la sesión.
+                    session.set("userId", user!.id);
+                    session.set("username", user!.username);
+                    return redirect("/", {
+                        headers: {
+                            "Set-Cookie": await commitSession(session) //Confirmar cambios
+                        }
+                    });
+                }
+                return json({
+                    errors:{
+                        email:"El email no está disponible",
                     }
-                });
-            }else{
-                return new Response(JSON.stringify({ error:"Este usuario ya está registrado"}), 
-                {
-                    status: 500,
-                    headers: { 'Content-Type': 'application/json' },
-                  });
+                },
+                {status:400});
             }
+            return json({ 
+                errors:{
+                    username:"El nombre de usuario no está disponible. Pruebe otro"
+                }
+            },
+                {status: 400}
+            );
         },
         (errors) => {
-            const username = datosFormulario.get("username") || "";
-            const email = datosFormulario.get("email") || "";
-            const password = datosFormulario.get("password") || "";
             return json(
                 {
-                  errors,
-                  u: username,
-                  e: email,
-                  pass: password,
+                    errors,
+                    username: datosFormulario.get("username"),
+                    email: datosFormulario.get("email"),
+                    password: datosFormulario.get("password")
                 },
                 {
-                  status: 400,
+                    status: 400,
                 }
-              );
+            );
         }
     );
 };
@@ -94,7 +101,6 @@ export default function Register() {
         "No utilices palabras malsonantes",
     ];
     const actionData = useActionData<typeof action>();
-    const fetcherRegister = useFetcher();
     const [password, setPassword] = useState<string>("");
     const [inputType, setInputType] = useState<string>("password");
     const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -117,15 +123,18 @@ export default function Register() {
     }
 
     useEffect(() => {
-        console.log("Entreeeee", actionData);
+        if (actionData?.password != null) {
+            setPassword(actionData.password);
+        }
     }, [actionData]);
 
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
             <h1 className="text-4xl">¡Regístrate!</h1>
-            <fetcherRegister.Form
+            <Form
                 className="bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl"
                 method="post"
+                encType="multipart/form-data"
             >
                 <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
                     Usuario:
@@ -193,7 +202,7 @@ export default function Register() {
                 <button className="mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]">
                     Registrarme
                 </button>
-            </fetcherRegister.Form>
+            </Form>
             <p>
                 ¿Ya tienes cuenta?{" "}
                 <NavLink to={"../login"} className="underline">
