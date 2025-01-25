@@ -1,18 +1,19 @@
 import { getSpotifyToken } from "~/.server/spotify";
 
-export async function search(q: string) {
+export async function search(q: string, type: string = 'artist,album,tracks', offset: number = 0, limit: number = 10) {
     const token = await getSpotifyToken();
 
     const query = new URLSearchParams({
-        q: q,
-        type: 'artist,album,playlist',
-        limit: '10'
-    })
-    const res = await fetch(`https://api.spotify.com/v1/search?${query}`, {
-        method: 'GET',
-        headers: { 'Authorization': 'Bearer ' + token },
+        q,
+        type,
+        limit: limit.toString(),
+        offset: offset.toString(),
     });
 
-    // https://developer.spotify.com/documentation/web-api/reference/search
+    const res = await fetch(`https://api.spotify.com/v1/search?${query}`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+
     return await res.json();
 }
