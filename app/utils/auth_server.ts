@@ -14,11 +14,11 @@ export async function getCurrentUser(request:Request){
 }
 
 export async function requiredLoggedOutUser(request:Request){
-    const user=await getCurrentUser(request);
-    if(user!=null){
-        throw redirect("/app");
+        const user=await getCurrentUser(request);
+        if(user!==null){
+            throw redirect("/");
+        }
     }
-}
 
 export async function requiredLoggedInUser(request:Request){
     const user=await getCurrentUser(request);

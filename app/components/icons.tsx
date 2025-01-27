@@ -49,3 +49,61 @@ export function RejectedIcon() {
     )
 }
 
+export function SearchIcon() {
+    return (
+        <div className="w-[3.75rem] h-[3.75rem] rounded-full">
+            <button className="w-[3.75rem] h-[3.75rem] flex items-center justify-center">
+                <svg className="h-[3rem] w-[3rem]" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 600 600">
+                    <path d="M496.131,435.698L374.855,332.551c-12.537-11.283-25.945-16.463-36.777-15.963C366.707,283.055,384,239.549,384,192
+                    C384,85.961,298.039,0,192,0C85.962,0,0,85.961,0,192s85.961,192,192,192c47.549,0,91.055-17.293,124.588-45.922
+                    c-0.5,10.831,4.68,24.238,15.963,36.775L435.697,496.13c17.662,19.623,46.512,21.277,64.109,3.678
+                    C517.406,482.209,515.754,453.359,496.131,435.698z M192,320c-70.692,0-128-57.309-128-128c0-70.692,57.308-128,128-128
+                    c70.691,0,128,57.308,128,128C320,262.691,262.693,320,192,320z"/>
+                </svg>
+            </button>
+        </div>
+
+    );
+}
+
+export function HomeButton() {
+    return (
+        <div className="w-[3.75rem] h-[3.75rem] rounded-full mb-20">
+            <button className="w-[3.75rem] h-[3.75rem]">
+                <svg height="100%" style={{ fillRule: "evenodd" }}
+                    viewBox="0 0 32 32">
+                    <path d="M15.994,1.995c-7.727,0 -14,6.273 -14,14c-0,7.727 6.273,14 14,14c7.727,0 14,-6.273 14,-14c-0,-7.727 -6.273,-14 -14,-14Zm8,14c-0,4.416 -3.585,8 -8,8c-0.552,0 -1,0.448 -1,1c-0,0.552 0.448,1 1,1c5.519,0 10,-4.481 10,-10c-0,-0.552 -0.448,-1 -1,-1c-0.552,0 -1,0.448 -1,1Zm-7.994,-5.993c-3.311,-0 -6,2.688 -6,6c0,3.311 2.689,6 6,6c3.311,-0 6,-2.689 6,-6c-0,-3.312 -2.689,-6 -6,-6Zm-0,2c2.208,-0 4,1.792 4,4c0,2.207 -1.792,4 -4,4c-2.208,-0 -4,-1.793 -4,-4c0,-2.208 1.792,-4 4,-4Zm0,2c-1.104,-0 -2,0.896 -2,2c0,1.103 0.896,2 2,2c1.104,-0 2,-0.897 2,-2c0,-1.104 -0.896,-2 -2,-2Zm-8.006,1.993c-0,-4.415 3.584,-8 8,-8c0.552,0 1,-0.448 1,-1c-0,-0.552 -0.448,-1 -1,-1c-5.519,0 -10,4.481 -10,10c-0,0.552 0.448,1 1,1c0.552,0 1,-0.448 1,-1Z" />
+                </svg>
+            </button>
+        </div>
+    );
+}
+
+export function LoginIcon() {
+    return (
+        <svg width="35px" height="35px" viewBox="0 0 512.00 512.00" fill="#000000" xmlns="http://www.w3.org/2000/svg" stroke="#000000" strokeWidth="0.00512">
+            <g id="svgRepoBgCarrier" strokeWidth="0"></g>
+            <g id="svgRepoTracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+            <g id="svgRepoIconCarrier">
+                <title>ionicons-v5-o</title>
+                <path d="M392,80H232a56.06,56.06,0,0,0-56,56V240H329.37l-52.68-52.69a16,16,0,0,1,22.62-22.62l80,80a16,16,0,0,1,0,22.62l-80,80a16,16,0,0,1-22.62-22.62L329.37,272H176V376c0,32.05,33.79,56,64,56H392a56.06,56.06,0,0,0,56-56V136A56.06,56.06,0,0,0,392,80Z"></path>
+                <path d="M80,240a16,16,0,0,0,0,32h96V240Z"></path>
+            </g>
+        </svg>
+    );
+}
+
+export function LogoutIcon() {
+    return (
+        <svg width="35px" height="35px" viewBox="0 0 512 512" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+            <g id="svgRepoBgCarrier" strokeWidth="0"></g>
+            <g id="svgRepoTracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+            <g id="svgRepoIconCarrier">
+                <title>ionicons-v5-o</title>
+                <path d="M160,256a16,16,0,0,1,16-16H320V136c0-32-33.79-56-64-56H104a56.06,56.06,0,0,0-56,56V376a56.06,56.06,0,0,0,56,56H264a56.06,56.06,0,0,0,56-56V272H176A16,16,0,0,1,160,256Z"></path>
+                <path d="M459.31,244.69l-80-80a16,16,0,0,0-22.62,22.62L409.37,240H320v32h89.37l-52.68,52.69a16,16,0,1,0,22.62,22.62l80-80a16,16,0,0,0,0-22.62Z"></path>
+            </g>
+        </svg>
+    );
+}
+

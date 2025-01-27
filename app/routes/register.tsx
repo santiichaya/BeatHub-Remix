@@ -1,9 +1,10 @@
-import { ActionFunction, json, redirect } from "@remix-run/node";
+import { ActionFunction, json, LoaderFunction, redirect } from "@remix-run/node";
 import { Form, NavLink, useActionData } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { AcceptedIcon, CloseEyeIcon, OpenEyeIcon, RejectedIcon } from "~/components/icons";
 import { createUser, getUserByEmail, getUserByUsername } from "~/models/user.server";
+import { requiredLoggedOutUser } from "~/utils/auth_server";
 import { generate_hash } from "~/utils/hash";
 import { commitSession, getSession } from "~/utils/session";
 import { validateForm } from "~/utils/validateform";
@@ -25,8 +26,11 @@ const passwordSchema = z.string().min(8, { message: "Debe tener al menos 8 carac
     .refine((password) => /\d/.test(password), { message: "Debe tener al menos un número" })
     .refine((password) => !/\s/.test(password), { message: "No debe contener espacios" })
     .refine((password) => !["123456", "password", "qwerty"].includes(password), { message: "La contraseña es demasiado común" })
-    .transform((password) => removeAccents(password.toLowerCase()))
-    .refine((password) => !badWords.some((word: string) => password.includes(word)), { message: "No utilices palabras malsonantes" });
+    .refine((password) => {
+        const transformpassword = removeAccents(password.toLowerCase());
+        return !badWords.some((word: string) => transformpassword.includes(word))
+    },
+        { message: "No utilices palabras malsonantes" });
 
 const RegisterSchema = z.object({
     username: z.string().min(1, "No puede estar vacío el username"),
@@ -34,9 +38,14 @@ const RegisterSchema = z.object({
     password: passwordSchema,
 });
 
+export const loader: LoaderFunction = async ({ request }) => {
+    await requiredLoggedOutUser(request);
+    return null;
+}
 
 
 export const action: ActionFunction = async ({ request }) => {
+    await requiredLoggedOutUser(request);
     const datosFormulario = await request.formData();
     return validateForm(
         datosFormulario,
@@ -47,6 +56,7 @@ export const action: ActionFunction = async ({ request }) => {
                 user = await getUserByEmail(email);
                 if (user == null) {
                     const passwordHash = await generate_hash(password);
+                    console.log(passwordHash);
                     await createUser(username, passwordHash, email);
                     user = await getUserByUsername(username);
                     const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
@@ -60,18 +70,18 @@ export const action: ActionFunction = async ({ request }) => {
                     });
                 }
                 return json({
-                    errors:{
-                        email:"El email no está disponible",
+                    errors: {
+                        email: "El email no está disponible",
                     }
                 },
-                {status:400});
+                    { status: 400 });
             }
-            return json({ 
-                errors:{
-                    username:"El nombre de usuario no está disponible. Pruebe otro"
+            return json({
+                errors: {
+                    username: "El nombre de usuario no está disponible. Pruebe otro"
                 }
             },
-                {status: 400}
+                { status: 400 }
             );
         },
         (errors) => {
@@ -205,7 +215,7 @@ export default function Register() {
             </Form>
             <p>
                 ¿Ya tienes cuenta?{" "}
-                <NavLink to={"../login"} className="underline">
+                <NavLink to={"/login"} className="underline">
                     Iniciar sesión
                 </NavLink>
             </p>

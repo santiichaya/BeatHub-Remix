@@ -1,10 +1,11 @@
-import { ActionFunction, json, redirect } from '@remix-run/node';
+import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node';
 import { Form, NavLink, useActionData} from '@remix-run/react'
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { CloseEyeIcon, OpenEyeIcon } from '~/components/icons';
 import { getUserByUsername } from '~/models/user.server';
-import { verifyPassword } from '~/utils/hash';
+import { requiredLoggedOutUser } from '~/utils/auth_server';
+import {verifyPassword } from '~/utils/hash';
 import { commitSession, getSession } from '~/utils/session';
 import { validateForm } from '~/utils/validateform';
 
@@ -13,15 +14,20 @@ const LoginSchema = z.object({
   password: z.string().min(1, "No puedes dejar vacío el password")
 });
 
+export const loader:LoaderFunction=async({request})=>{
+  await requiredLoggedOutUser(request);
+  return null;
+}
+
 export const action: ActionFunction = async ({ request }) => {
-  
+  await requiredLoggedOutUser(request);
   const datosFormulario = await request.formData();
   return validateForm(
     datosFormulario,
     LoginSchema,
     async ({ username, password }) => {
       const user = await getUserByUsername(username);
-      if (user != null) {
+      if (user !== null) {
         if (await verifyPassword(password, user.password)) {
           const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
           const session = await getSession(cookieHeader); //Obtengo la sesión.
