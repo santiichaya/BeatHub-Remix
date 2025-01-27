@@ -80,7 +80,7 @@ export default function Login() {
         method="post"
         className='bg-secondary w-[20rem] md:w-[45%] h-[60%] flex flex-col p-4 rounded-2xl items-center justify-evenly text-lg md:text-2xl'>
           <div className="m-0 p-0 w-full border-b border-black">
-        <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>
+        <label className='mt-6 w-full flex justify-between pb-4 items-center'>
           Username:
           <input
             type="text"
@@ -91,7 +91,7 @@ export default function Login() {
         {actionData?.errors?.username && (<p className='w-full text-red-500'>{actionData.errors.username}</p>)}
         </div>
         <div className="m-0 p-0 w-full border-b border-black">
-        <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Password:
+        <label className='mt-6 w-full flex justify-between relative pb-4 items-center'>Password:
           <input type={inputType} name="password" value={password} onChange={validatePassword} className={`w-[60%] border-2 rounded focus:outline-none p-1 text-black ${inputType === "text" ? "sm:text-sm md:text-xl h-11" : "text-3xl h-11"}`} />
           <button type='button' className='absolute right-[10px] top-[10px]' onMouseDown={() => setInputType('text')} onMouseUp={() => setInputType('password')} onMouseLeave={() => setInputType('password')}>{inputType === 'text' ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
         </label>
