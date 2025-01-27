@@ -82,26 +82,17 @@ export default function Login() {
     <div className='w-full h-full flex flex-col justify-center items-center gap-20'>
       <h1 className='text-4xl justify-self-start'>Inicia sesion!</h1>
 
-      <Form
-        method="post"
-        className='bg-secondary w-[45%] h-[60%] flex flex-col p-10 rounded-2xl items-center justify-evenly text-2xl'>
-        <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>
-          Username:
-          <input
-            type="text"
-            name="username"
-            className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1' 
-            defaultValue={actionData?.username}/>
-        </label>
-        {actionData?.errors?.username && (<p>{actionData.errors.username}</p>)}
-        <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Password:
-          <input type={inputType} name="password" value={password} onChange={validatePassword} className={`w-[60%] border-2 rounded focus:outline-none p-1 ${inputType === "text" ? "text-xl h-11" : "text-3xl h-11"}`} />
-          <button type='button' className='absolute right-[10px] top-[10px]' onMouseDown={() => setInputType('text')} onMouseUp={() => setInputType('password')} onMouseLeave={() => setInputType('password')}>{inputType === 'text' ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
-        </label>
-        {actionData?.errors?.password && (<p>{actionData.errors.password}</p>)}
-        <button className='mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[20rem]'>Log in</button>
-      </Form>
-      <p>¿No tienes cuenta? <NavLink to={'/register'} className='underline'>Registrate</NavLink></p>
+        <fetcherLogin.Form method="post" className='bg-secondary w-[45%] h-[60%] flex flex-col p-10 rounded-2xl items-center justify-evenly text-2xl'>
+            <label className='mt-6 w-full flex justify-between border-b border-black pb-4 items-center'>Username:
+                <input type="text" name="username" className='w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1'/>
+            </label>
+            <label className='mt-6 w-full flex justify-between relative border-b border-black pb-4 items-center'>Password:
+            <input type={inputType} name="password" value={password} onChange={validatePassword} className={`w-[60%] border-2 rounded focus:outline-none p-1 ${inputType === "text" ? "text-xl h-11" : "text-3xl h-11"}`} />
+                <button type='button' className='absolute right-[10px] top-[10px]' onMouseDown={()=>setInputType('text')} onMouseUp={()=>setInputType('password')} onMouseLeave={()=>setInputType('password')}>{inputType==='text' ?(<OpenEyeIcon/>):(<CloseEyeIcon/>)}</button>
+            </label>
+            <button className='mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[20rem]'>Log in</button>
+        </fetcherLogin.Form>
+        <p>¿No tienes cuenta? <NavLink to={'/register'} className='underline'>Registrate</NavLink></p>
     </div>
   )
 }

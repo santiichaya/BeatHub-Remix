@@ -141,33 +141,31 @@ export default function Register() {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
             <h1 className="text-4xl">¡Regístrate!</h1>
-            <Form
+            <fetcherRegister.Form
                 className="bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl"
                 method="post"
                 encType="multipart/form-data"
             >
-                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
+                <label className="mt-6 w-full flex justify-between border-b border-black pb-2 items-center">
                     Usuario:
                     <input
                         type="text"
                         name="username"
                         className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
-                        defaultValue={actionData?.username || ""}
                     />
-                    {actionData?.errors?.username && (<p>{actionData.errors.username}</p>)}
                 </label>
-                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
+                <label className="mt-6 w-full flex justify-between border-b border-black pb-2 items-center">
                     Email:
                     <input
                         type="email"
                         name="email"
                         placeholder="ejemplo@gmail.com"
+                        pattern="[a-z0-9._%+-]+@[a-z0-9-]+\\.[a-z]{2,}$"
                         className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
-                        defaultValue={actionData?.email || ""}
                     />
                     {actionData?.errors?.email && (<p>{actionData.errors.email}</p>)}
                 </label>
-                <label className="mt-6 w-full flex flex-col relative border-b border-black pb-4">
+                <label className="mt-6 w-full flex flex-col relative border-b border-black pb-2">
                     <span className="flex justify-between items-center">
                         Contraseña:
                         <div className="relative w-[60%]">
@@ -178,7 +176,7 @@ export default function Register() {
                                 onChange={validatePassword}
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
-                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 ${inputType === "text" ? "text-2xl" : "text-2xl"}`}
+                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 text-black ${inputType === "text" ? "text-sm md:text-md xl:text-xl" : "text-2xl"}`}
                             />
                             <button
                                 type="button"
@@ -186,6 +184,8 @@ export default function Register() {
                                 onMouseDown={() => setInputType("text")}
                                 onMouseUp={() => setInputType("password")}
                                 onMouseLeave={() => setInputType("password")}
+                                onTouchStart={() => setInputType("text")}
+                                onTouchEnd={() => setInputType("password")}
                             >
                                 {inputType === "text" ? <OpenEyeIcon /> : <CloseEyeIcon />}
                             </button>
@@ -199,9 +199,9 @@ export default function Register() {
                                     <li key={index} className="flex justify-between items-center">
                                         <span>{validation}</span>
                                         {passwordErrors.includes(validation) ? (
-                                            <RejectedIcon />
+                                            <div className="bg-wrong rounded-[100%] h-[23px] w-[23px] left-2 border-[#960000] border-[2px]"></div>
                                         ) : (
-                                            <AcceptedIcon />
+                                            <div className="bg-correct rounded-[100%] h-[23px] w-[23px] left-2 border-[#009000] border-[2px]"></div>
                                         )}
                                     </li>
                                 ))}
@@ -212,7 +212,7 @@ export default function Register() {
                 <button className="mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]">
                     Registrarme
                 </button>
-            </Form>
+            </fetcherRegister.Form>
             <p>
                 ¿Ya tienes cuenta?{" "}
                 <NavLink to={"/login"} className="underline">
