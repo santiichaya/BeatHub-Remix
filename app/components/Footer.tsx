@@ -2,7 +2,7 @@ function Footer() {
   return ( //X instagram tiktom whatsapp
     <div className="bg-secondary md:ml-20 h-fit pb-[30rem]">
       <div className="flex flex-wrap w-[100%] justify-center">
-        <div className="w-[25%] bg-green-600 m-0 flex justify-center align-middle h-fit">
+        <div className="w-[25%] bg-green-600 m-0 flex justify-center align-middle h-fit pb-12">
           <a href="https://x.com/" target="_blank" rel="noopener noreferrer">
             <div className="espacio3d">
               <div className="cubo3d flex flex-col justify-end">
