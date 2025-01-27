@@ -1,91 +1,67 @@
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import {useFetcher, useLoaderData } from "@remix-run/react";
-import {createUser, deleteUser, getAllUsers, } from "../models/user.server";
+import { useLoaderData, Link } from "@remix-run/react";
+import {LoaderFunction } from "@remix-run/node";
 import React from "react";
-import { User } from "@prisma/client";
-import { DeleteIcon } from "~/components/icons";
-import { generate_hash } from "~/utils/hash";
-import { getSession } from "~/utils/session";
+import { getSpotifyToken } from "~/.server/spotify";
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const url = new URL(request.url);
+  const offset = parseInt(url.searchParams.get("offset") || "0");
 
-export const loader:LoaderFunction=async({request})=>{
-  try {
-    const usuarios= await getAllUsers();
-    const cookieHeader=request.headers.get("cookie");
-    const session=await getSession(cookieHeader);
-    return ({usuarios,session});
-  } catch (error) {
-      console.log(error);
-  }
-};
-
-export const action: ActionFunction = async ({ request }) => {
-  try {
-    const datosFormulario = await request.formData();
-    switch(datosFormulario.get("_action")){
-      case "crear":{
-        const username=datosFormulario.get("username") as string;
-        const email=datosFormulario.get("email") as string;
-        const password=datosFormulario.get("password") as string;
-        const passwordHash= await generate_hash(password);
-        console.log("Creado con éxito!!!!");
-        console.log(username);
-        console.log(password);
-        console.log(email);
-        return createUser(username,passwordHash,email);
-      }
-      case "eliminar":{
-        const id=Number(datosFormulario.get("id_usuario"));
-        console.log("Borrado con éxito!!!!");
-        console.log(id);
-        return deleteUser(id);
-      }
-      default:{
-        return null;
-      }
+  const token = await getSpotifyToken();
+  const artistResponse = await fetch(
+    `https://api.spotify.com/v1/search?q=genre:pop&type=artist&limit=6&offset=${offset}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  } catch (error) {
-    console.error("Error al crear el usuario:", error);
-    return new Response("Error al crear el usuario", { status: 500 });
-  }
-};
+  );
+  const artistData = await artistResponse.json();
 
+  return { artists: artistData.artists.items, offset};
+};
 
 
 export default function Index() {
-  const {usuarios,session}=useLoaderData<typeof loader>();
-  const createUserFetcher=useFetcher();
-  return(
+  const { artists, offset} = useLoaderData<typeof loader>();
+  return (
     <React.Fragment>
-       <createUserFetcher.Form method="post">
-          <input type="text" name="username"/>
-          <input type="password" name="password"/>
-          <input type="email" name="email"/>
-          <input type="submit" name="_action"/>
-      </createUserFetcher.Form>
-      <div>
-          <h2>Bienvenido a BeatHub {session.data.username}</h2>
-          <h2>El id del usuario que sea registrado es: {session.data.userId}</h2>
-          <h2>El usuario que tenemos ahora mismo es:</h2>
-          {usuarios.map((usuario:User)=>{
-            return(
-              <React.Fragment key={usuario.id}>
-                <ul>
-                  <li>Username: {usuario.username}</li>
-                  <li>Email: {usuario.email}</li>
-                  <li>Fecha de registro: {new Date(usuario.createdAt).toLocaleDateString()}</li>
-                  <li>Tiempo en la aplicación: {usuario.time}</li>
-                  <li>Canción favorita: {usuario.favoriteSongId}</li>
-                </ul>
-                <createUserFetcher.Form method="post">
-                <button type="submit" name="_action" value="eliminar">
-                  <DeleteIcon/>
-                </button>
-                <input type="hidden" name="id_usuario" value={usuario.id}/>
-                </createUserFetcher.Form>
-              </React.Fragment>
-            );
-          })}   
+      {/* Carrusel de Artistas */}
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold mb-4">Artistas Populares</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {artists.map((artist: any) => (
+            <div
+              key={artist.id}
+              className="p-4 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+            >
+              <img
+                src={artist.images[0]?.url}
+                alt={artist.name}
+                className="w-24 h-24 mx-auto rounded-full object-cover mb-4"
+              />
+              <h3 className="text-lg font-medium text-white text-center">{artist.name}</h3>
+            </div>
+          ))}
+        </div>
+
+        {/* Botones de Paginación */}
+        <div className="flex justify-between max-w-sm mx-auto mt-6">
+          {offset > 0 && (
+            <Link
+              to={`/?offset=${offset - 6}`}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Anterior
+            </Link>
+          )}
+          <Link
+            to={`/?offset=${offset + 6}`}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Siguiente
+          </Link>
+        </div>
       </div>
     </React.Fragment>
   );

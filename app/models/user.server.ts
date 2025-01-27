@@ -2,7 +2,7 @@ import db from "../db.server";
 import { handleDelete } from "./utils";
 
 
-export function getUser(id:number) {
+export function getUserById(id:number) {
     return db.user.findUnique({
       where: {
         id,
@@ -16,6 +16,14 @@ export function getUser(id:number) {
         username,
       },
     });
+  }
+
+  export function getUserByEmail(email:string){
+    return db.user.findUnique({
+      where:{
+        email,
+      },
+    })
   }
 
 
@@ -40,7 +48,7 @@ export function createUser(username:string,password:string,email:string,time:num
 
 export function deleteUser(id:number) {
     return handleDelete(async() =>{
-        const user=await getUser(id);
+        const user=await getUserById(id);
 
         if(!user){
             return null;
