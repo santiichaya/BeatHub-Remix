@@ -141,7 +141,7 @@ export default function Register() {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-20">
             <h1 className="text-4xl">¡Regístrate!</h1>
-            <fetcherRegister.Form
+            <Form
                 className="bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl"
                 method="post"
                 encType="multipart/form-data"
@@ -197,13 +197,13 @@ export default function Register() {
                             <ul className="text-sm text-gray-700 space-y-1">
                                 {passwordValidations.map((validation, index) => (
                                     <li key={index} className="flex justify-between items-center">
-                                        <span>{validation}</span>
-                                        {passwordErrors.includes(validation) ? (
-                                            <div className="bg-wrong rounded-[100%] h-[23px] w-[23px] left-2 border-[#960000] border-[2px]"></div>
-                                        ) : (
-                                            <div className="bg-correct rounded-[100%] h-[23px] w-[23px] left-2 border-[#009000] border-[2px]"></div>
-                                        )}
-                                    </li>
+                                    <span>{validation}</span>
+                                    {passwordErrors.includes(validation) ? (
+                                        <RejectedIcon />
+                                    ) : (
+                                        <AcceptedIcon />
+                                    )}
+                                </li>
                                 ))}
                             </ul>
                         </div>
@@ -212,7 +212,7 @@ export default function Register() {
                 <button className="mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]">
                     Registrarme
                 </button>
-            </fetcherRegister.Form>
+            </Form>
             <p>
                 ¿Ya tienes cuenta?{" "}
                 <NavLink to={"/login"} className="underline">

@@ -12,7 +12,7 @@ function Header() {
                 <span className="font-kanit font-bold text-black">beathub</span>
             </Link>
             <div className="flex flex-row md:flex-col items-center justify-center md:space-y-10">
-                <Link to="/"><HomeButton /></Link>
+                <Link to="/" className='mt-20 mr-4 md:mt-0 md:mr-0'><HomeButton /></Link>
                 <Link to="/search"><SearchIcon /></Link>
                 {data?.isLoggedIn ?
                     (<Link to="/logout"><LogoutIcon /></Link>)

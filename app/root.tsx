@@ -39,12 +39,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-primary min-h-screen">
-        <div className="flex flex-col md:flex-row">
-            <Header />
-          <main className=" text-white md:ml-20 w-full h-fit" >
-            {children}
-          </main>
+      <body className="bg-primary min-h-screen flex flex-col">
+        <div className="flex flex-col md:flex-row flex-grow">
+          <Header />
+          <main className="text-white md:ml-20 w-full h-fit">{children}</main>
         </div>
         <Footer />
         <Scripts />
@@ -52,6 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
+
 
 
 
