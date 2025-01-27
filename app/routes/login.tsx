@@ -72,12 +72,6 @@ export default function Login() {
     setPassword(event.target.value);
   }
 
-  useEffect(()=>{
-    if(actionData?.password!=null){
-      setPassword(actionData.password);
-    }
-  },[actionData])
-
   return (
     <div className='w-full h-full flex flex-col justify-center items-center gap-20'>
       <h1 className='text-4xl justify-self-start'>Inicia sesion!</h1>

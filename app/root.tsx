@@ -3,6 +3,9 @@ import type { ErrorResponse, LinksFunction, LoaderFunction } from "@remix-run/no
 
 import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
+
+import Footer from "./components/Footer";
+
 import { getCurrentUser } from "./utils/auth_server";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -37,18 +40,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-primary flex">
-        <nav>
+      <body className="bg-primary min-h-screen flex flex-col">
+        <div className="flex flex-col md:flex-row flex-grow">
           <Header />
-        </nav>
-        <main className="flex-1">
-          {children}
-        </main>
+          <main className="text-white md:ml-20 w-full h-fit">{children}</main>
+        </div>
+        <Footer />
         <Scripts />
       </body>
     </html>
   );
 }
+
+
+
 
 export default function App() {
   return <Outlet />;
