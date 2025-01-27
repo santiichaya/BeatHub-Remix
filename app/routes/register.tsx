@@ -139,35 +139,42 @@ export default function Register() {
     }, [actionData]);
 
     return (
-        <div className="w-full h-full flex flex-col justify-center items-center gap-20">
-            <h1 className="text-4xl">¡Regístrate!</h1>
+        <div className="h-full flex flex-col justify-center items-center">
+            <h1 className="text-3xl md:text-4xl mb-12 mt-12">¡Regístrate!</h1>
             <Form
-                className="bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl"
+                className="bg-secondary w-[20rem] md:w-[60%] max-w-[40rem] h-fit flex flex-col p-5 rounded-xl items-center text-lg md:text-2xl mb-12"
                 method="post"
                 encType="multipart/form-data"
             >
-                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
+                <div className="m-0 p-0 w-full border-b border-black">
+                <label className="mt-6 w-full flex justify-between pb-2 items-center">
                     Usuario:
                     <input
                         type="text"
                         name="username"
-                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12 text-black text-sm md:text-2xl"
                         defaultValue={actionData?.username || ""}
                     />
-                    {actionData?.errors?.username && (<p>{actionData.errors.username}</p>)}
+                    
                 </label>
-                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
+                {actionData?.errors?.username && (<p className="w-[100%] text-red-500">{actionData.errors.username}</p>)}
+                </div>
+                <div className="m-0 p-0 w-full border-b border-black">
+                <label className="mt-6 w-full flex justify-between pb-2 items-center">
                     Email:
                     <input
                         type="email"
                         name="email"
                         placeholder="ejemplo@gmail.com"
-                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12 text-black text-sm md:text-2xl"
                         defaultValue={actionData?.email || ""}
                     />
-                    {actionData?.errors?.email && (<p>{actionData.errors.email}</p>)}
+                    
                 </label>
-                <label className="mt-6 w-full flex flex-col relative border-b border-black pb-4">
+                {actionData?.errors?.email && (<p className="w-[100%] text-red-500">{actionData.errors.email}</p>)}
+                </div>
+                <div className="m-0 p-0 w-full border-b border-black">
+                <label className="mt-6 w-full flex flex-col relative pb-2">
                     <span className="flex justify-between items-center">
                         Contraseña:
                         <div className="relative w-[60%]">
@@ -178,7 +185,7 @@ export default function Register() {
                                 onChange={validatePassword}
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
-                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 ${inputType === "text" ? "text-2xl" : "text-2xl"}`}
+                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 text-black ${inputType === "text" ? "text-sm md:text-md xl:text-xl" : "text-2xl"}`}
                             />
                             <button
                                 type="button"
@@ -190,8 +197,8 @@ export default function Register() {
                                 {inputType === "text" ? <OpenEyeIcon /> : <CloseEyeIcon />}
                             </button>
                         </div>
-                        {actionData?.errors?.password && (<p>{actionData.errors.password}</p>)}
                     </span>
+                    {actionData?.errors?.password && (<p className="w-[100%] text-red-500">{actionData.errors.password}</p>)}
                     {isFocused && (
                         <div className="absolute top-[110%] left-0 w-full bg-gray-100 border border-gray-300 rounded-lg p-2 shadow-lg">
                             <ul className="text-sm text-gray-700 space-y-1">
@@ -209,6 +216,7 @@ export default function Register() {
                         </div>
                     )}
                 </label>
+                </div>
                 <button className="mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]">
                     Registrarme
                 </button>
