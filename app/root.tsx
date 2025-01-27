@@ -1,8 +1,18 @@
-import { Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
-import type { ErrorResponse, LinksFunction } from "@remix-run/node";
+import { json, Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
+import type { ErrorResponse, LinksFunction, LoaderFunction } from "@remix-run/node";
 
 import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
+import { getCurrentUser } from "./utils/auth_server";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getCurrentUser(request);
+  return json(
+    {
+      isLoggedIn: user !== null
+    }
+  )
+}
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindCSSURL },
