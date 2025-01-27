@@ -1,38 +1,26 @@
-import { useState, useRef } from "react";
+import { useState, useRef, Key } from "react";
 import PlayButton from "./PlayButton";
+import { Artist } from "@prisma/client";
 
-type SongsProps = {
-  id: number;
-  showOnlyPlayButton?: boolean;
+type SongData = {
+  id:string|number
+  title: string;
+  artist:string;
+  genre: string;
+  photo: string;
+  duration: number;
+  url: string;
 };
 
-export function Song({ id, showOnlyPlayButton = false }: SongsProps) {
+type SongsProps = {
+  id:Key;
+  showOnlyPlayButton?: boolean;
+  songData: SongData;
+};
+
+export function Song({ id, showOnlyPlayButton = false, songData }: SongsProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  /*
-  const song = getSongById(id);
-  const artista = song?.artist_id ? getArtistById(song.artist_id) : null;
-  */
-
-  const song = {
-    id: 1,
-    title: "NIGGACLAUS",
-    artist_id: 1,
-    genre: "Pop",
-    photo: "https://niggaclaus.xyz/assets/images/image01.png?v=56a91d47", 
-    duration: 150,
-    url: "", 
-  };
-
-  const artista = {
-    id: 1,
-    name: "Artista Ejemplo",
-  };
-
-  const minutes = Math.trunc(song.duration / 60);
-  const seconds = `0${Math.trunc(song.duration % 60)}`;
-  const duracion = `${minutes}:${seconds.slice(-2)}`;
 
   const toggleAudio = () => {
     if (audioRef.current) {
@@ -47,6 +35,10 @@ export function Song({ id, showOnlyPlayButton = false }: SongsProps) {
     }
   };
 
+  const minutes = Math.trunc(songData.duration / 60);
+  const seconds = `0${Math.trunc(songData.duration % 60)}`;
+  const duracion = `${minutes}:${seconds.slice(-2)}`;
+
   return (
     <article
       className={`${
@@ -58,17 +50,17 @@ export function Song({ id, showOnlyPlayButton = false }: SongsProps) {
       {!showOnlyPlayButton && (
         <>
           <header className="w-4/5 flex items-center">
-            <img src={song.photo} className="h-12 rounded-lg" alt={`${song.title} cover`} />
+            <img src={songData.photo} className="h-12 rounded-lg" alt={`${songData.title} cover`} />
             <div className="h-full w-4/5 flex items-center pl-4">
-              <h3 className="w-[35%] text-start">{song.title}</h3>
-              <p className="text-sm font-light w-[40%] text-start">{artista.name}</p>
-              <p className="text-xs font-light w-[25%] text-start">{song.genre}</p>
+              <h3 className="w-[35%] text-start">{songData.title}</h3>
+              <p className="text-sm font-light w-[40%] text-start">{songData.artist}</p>
+              <p className="text-xs font-light w-[25%] text-start">{songData.genre}</p>
             </div>
           </header>
           <footer className="w-1/5 flex justify-around items-center">
             <p className="text-sm font-thin">{duracion}</p>
             <PlayButton onPlay={toggleAudio} estado={isPlaying} />
-            <audio ref={audioRef} src={song.url} />
+            <audio ref={audioRef} src={songData.url} />
           </footer>
         </>
       )}
@@ -76,7 +68,7 @@ export function Song({ id, showOnlyPlayButton = false }: SongsProps) {
       {showOnlyPlayButton && (
         <footer className="mr-8 h-24 w-24 flex items-center justify-center">
           <PlayButton onPlay={toggleAudio} estado={isPlaying} />
-          <audio ref={audioRef} src={song.url} />
+          <audio ref={audioRef} src={songData.url} />
         </footer>
       )}
     </article>
