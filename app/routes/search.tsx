@@ -1,5 +1,3 @@
-// app/routes/search.tsx
-
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { search } from "~/models/search.server";
