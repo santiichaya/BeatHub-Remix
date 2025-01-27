@@ -1,6 +1,6 @@
 function SearchButton() {
     return (
-      <div className="w-[3.75rem] h-[3.75rem] rounded-full ml-[8rem] md:mr-[7rem]">
+      <div className="w-[3.75rem] h-[3.75rem] rounded-full ml-[3rem] md:ml-[8rem] md:mr-[7rem]">
       <button className="w-[3.75rem] h-[3.75rem] flex items-center justify-center">
           <svg className="w-14 h-14 md:h-[3.5rem] md:w-[3.5rem]" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 600 600">
               <path d="M496.131,435.698L374.855,332.551c-12.537-11.283-25.945-16.463-36.777-15.963C366.707,283.055,384,239.549,384,192
