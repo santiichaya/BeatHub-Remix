@@ -76,22 +76,22 @@ aside.cara2 { /* arriba */
 }
 
 .cubo3d:hover aside.cara1 {
-  transition: all 2s;
+  transition: all 1s;
   height: 20px;
 }
 
 .cubo3d:hover aside.cara2 {
-  transition: all 2s;
+  transition: all 1s;
   transform: rotateX(90deg) translateZ(-4px) translateY(30px);
 }
 
 .cubo3d:active aside.cara1 {
-  transition: all 2s;
+  transition: all 1s;
   height: 0px;
 }
 
 .cubo3d:active aside.cara2 {
-  transition: all 2s;
+  transition: all 1s;
   transform: rotateX(90deg) translateZ(-24px) translateY(30px);
 }
 

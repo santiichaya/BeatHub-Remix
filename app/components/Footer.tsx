@@ -1,6 +1,6 @@
 function Footer() {
   return ( //X instagram tiktom whatsapp
-    <div className="bg-secondary md:ml-20 h-fit pb-[30rem]">
+    <div className="bg-secondary md:ml-20 h-fit">
       <div className="flex flex-wrap w-[100%] justify-center">
         <div className="w-[25%] bg-green-600 m-0 flex justify-center align-middle h-fit pb-12">
           <a href="https://x.com/" target="_blank" rel="noopener noreferrer">
@@ -40,9 +40,9 @@ function Footer() {
             </div>
           </a>
         </div>
-        <div className="w-[25%] bg-blue-600 m-0 flex justify-center align-middle h-fit">cuarto</div>
-        <div className="w-[25%] bg-red-600 m-0 flex justify-center align-middle h-fit">cuarto</div>
-        <div className="w-[25%] bg-yellow-600 m-0 flex justify-center align-middle h-fit">cuarto</div>
+        <div className="w-[20%] bg-blue-600 m-0 flex justify-center align-middle h-fit">quinto</div>
+        <div className="w-[20%] bg-red-600 m-0 flex justify-center align-middle h-fit">quinto</div>
+        <div className="w-[20%] bg-yellow-600 m-0 flex justify-center align-middle h-fit">quinto</div>
         <p>© 2025 Beathub. Todos los derechos reservados.</p>
       </div>
     </div>

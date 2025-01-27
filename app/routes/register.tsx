@@ -1,11 +1,13 @@
-import { ActionFunction, redirect } from "@remix-run/node";
-import { NavLink, useFetcher } from "@remix-run/react";
-import React, { useState } from "react";
+import { ActionFunction, json, LoaderFunction, redirect } from "@remix-run/node";
+import { Form, NavLink, useActionData } from "@remix-run/react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { AcceptedIcon, CloseEyeIcon, OpenEyeIcon, RejectedIcon } from "~/components/icons";
-import { createUser, getUserByUsername } from "~/models/user.server";
+import { createUser, getUserByEmail, getUserByUsername } from "~/models/user.server";
+import { requiredLoggedOutUser } from "~/utils/auth_server";
 import { generate_hash } from "~/utils/hash";
 import { commitSession, getSession } from "~/utils/session";
+import { validateForm } from "~/utils/validateform";
 
 const badWords = [
     "polla", "coño", "puta", "gilipollas", "cabrón", "mierda",
@@ -24,49 +26,78 @@ const passwordSchema = z.string().min(8, { message: "Debe tener al menos 8 carac
     .refine((password) => /\d/.test(password), { message: "Debe tener al menos un número" })
     .refine((password) => !/\s/.test(password), { message: "No debe contener espacios" })
     .refine((password) => !["123456", "password", "qwerty"].includes(password), { message: "La contraseña es demasiado común" })
-    .transform((password) => removeAccents(password.toLowerCase()))
-    .refine((password) => !badWords.some((word: string) => password.includes(word)), { message: "No utilices palabras malsonantes" });
+    .refine((password) => {
+        const transformpassword = removeAccents(password.toLowerCase());
+        return !badWords.some((word: string) => transformpassword.includes(word))
+    },
+        { message: "No utilices palabras malsonantes" });
 
 const RegisterSchema = z.object({
-    username: z.string().min(1, "No puede estar vacío el campo"),
-    email: z.string().min(1, "No puedes dejar vacío el email").email(),
+    username: z.string().min(1, "No puede estar vacío el username"),
+    email: z.string().min(1, "No puedes dejar vacío el email").email("El email no es válido"),
     password: passwordSchema,
 });
 
+export const loader: LoaderFunction = async ({ request }) => {
+    await requiredLoggedOutUser(request);
+    return null;
+}
 
 
 export const action: ActionFunction = async ({ request }) => {
-    const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
-    const session = await getSession(cookieHeader); //Obtengo la sesión.
-    console.log(session);
-    try {
-        const datosFormulario = await request.formData();
-        const username = datosFormulario.get("username") as string;
-        let user = await getUserByUsername(username);
-        if (user === null) {
-            const email = datosFormulario.get("email") as string;
-            console.log(email);
-            const password = datosFormulario.get("password") as string;
-            console.log(password);
-            const passwordHash = await generate_hash(password);
-            await createUser(username, passwordHash, email);
-            console.log("Antes de obtenerlo:", user);
-            user = await getUserByUsername(username);
-            console.log(user);
-            session.set("userId", user!.id);
-            session.set("username", user!.username);
-            return redirect("/", {
-                headers: {
-                    "Set-Cookie": await commitSession(session) //Confirmar cambios
+    await requiredLoggedOutUser(request);
+    const datosFormulario = await request.formData();
+    return validateForm(
+        datosFormulario,
+        RegisterSchema,
+        async ({ username, email, password }) => { //Aquí puedo sacar directamente los name del formulario porque el validateForm devuelve en caso de éxito la función exitosa teniendo como párametro el objeto que le pasaste a zod ya validado y ajustado según el schema.
+            let user = await getUserByUsername(username);
+            if (user === null) {
+                user = await getUserByEmail(email);
+                if (user == null) {
+                    const passwordHash = await generate_hash(password);
+                    console.log(passwordHash);
+                    await createUser(username, passwordHash, email);
+                    user = await getUserByUsername(username);
+                    const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
+                    const session = await getSession(cookieHeader); //Obtengo la sesión.
+                    session.set("userId", user!.id);
+                    session.set("username", user!.username);
+                    return redirect("/", {
+                        headers: {
+                            "Set-Cookie": await commitSession(session) //Confirmar cambios
+                        }
+                    });
                 }
-            });
+                return json({
+                    errors: {
+                        email: "El email no está disponible",
+                    }
+                },
+                    { status: 400 });
+            }
+            return json({
+                errors: {
+                    username: "El nombre de usuario no está disponible. Pruebe otro"
+                }
+            },
+                { status: 400 }
+            );
+        },
+        (errors) => {
+            return json(
+                {
+                    errors,
+                    username: datosFormulario.get("username"),
+                    email: datosFormulario.get("email"),
+                    password: datosFormulario.get("password")
+                },
+                {
+                    status: 400,
+                }
+            );
         }
-        return null
-
-    } catch (error) {
-        console.error("Error al crear el usuario:", error);
-        return new Response("Error al crear el usuario", { status: 500 });
-    }
+    );
 };
 
 export default function Register() {
@@ -79,7 +110,7 @@ export default function Register() {
         "La contraseña es demasiado común",
         "No utilices palabras malsonantes",
     ];
-    const fetcherRegister = useFetcher();
+    const actionData = useActionData<typeof action>();
     const [password, setPassword] = useState<string>("");
     const [inputType, setInputType] = useState<string>("password");
     const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -92,7 +123,7 @@ export default function Register() {
     function validatePassword(event: React.ChangeEvent<HTMLInputElement>) {
         const validation = passwordSchema.safeParse(event.target.value);
         if (!validation.success) {
-            const erroresdeZod = validation.error?.errors.map((er) => er.message);
+            const erroresdeZod = validation.error.issues.map((er) => er.message);
             //Extraigo solo los mensajes de error para saber cuales son y los meto en el estado. validation.error es un objeto error que tiene una propiedad errors que es un array de objetos que contiene todos los errores, donde cada objeto representa un error de zod y por último, lo que hago es un map de errors para poder sacar cada mensaje de error de cada objeto.
             setPasswordErrors(erroresdeZod);
         } else {
@@ -101,28 +132,42 @@ export default function Register() {
         setPassword(event.target.value);
     }
 
+    useEffect(() => {
+        if (actionData?.password != null) {
+            setPassword(actionData.password);
+        }
+    }, [actionData]);
+
     return (
-        <div className="h-full flex flex-col justify-center items-center">
-            <h1 className="text-3xl md:text-4xl mb-12 mt-12">¡Regístrate!</h1>
-            <fetcherRegister.Form
-                className="bg-secondary w-[20rem] md:w-[60%] max-w-[40rem] h-fit flex flex-col p-5 rounded-xl items-center text-lg md:text-2xl mb-12"
+        <div className="w-full h-full flex flex-col justify-center items-center gap-20">
+            <h1 className="text-4xl">¡Regístrate!</h1>
+            <Form
+                className="bg-secondary w-fit h-fit flex flex-col p-10 rounded-2xl items-center text-2xl"
                 method="post"
+                encType="multipart/form-data"
             >
-                <label className="mt-6 w-full flex justify-between border-b border-black pb-2 items-center">
+                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
                     Usuario:
-                    <input type="text" name="username" className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12 text-black text-sm md:text-2xl"/>
+                    <input
+                        type="text"
+                        name="username"
+                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                        defaultValue={actionData?.username || ""}
+                    />
+                    {actionData?.errors?.username && (<p>{actionData.errors.username}</p>)}
                 </label>
-                <label className="mt-6 w-full flex justify-between border-b border-black pb-2 items-center">
+                <label className="mt-6 w-full flex justify-between border-b border-black pb-4 items-center">
                     Email:
                     <input
                         type="email"
                         name="email"
                         placeholder="ejemplo@gmail.com"
-                        pattern="[a-z0-9._%+-]+@[a-z0-9-]+\\.[a-z]{2,}$"
-                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12 text-black text-sm md:text-2xl"
+                        className="w-[60%] border-2 rounded border-slate-200 focus:outline-none p-1 h-12"
+                        defaultValue={actionData?.email || ""}
                     />
+                    {actionData?.errors?.email && (<p>{actionData.errors.email}</p>)}
                 </label>
-                <label className="mt-6 w-full flex flex-col relative border-b border-black pb-2">
+                <label className="mt-6 w-full flex flex-col relative border-b border-black pb-4">
                     <span className="flex justify-between items-center">
                         Contraseña:
                         <div className="relative w-[60%]">
@@ -133,7 +178,7 @@ export default function Register() {
                                 onChange={validatePassword}
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
-                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 text-black ${inputType === "text" ? "text-sm md:text-md xl:text-xl" : "text-2xl"}`}
+                                className={`w-full border-2 rounded focus:outline-none p-1 h-11 ${inputType === "text" ? "text-2xl" : "text-2xl"}`}
                             />
                             <button
                                 type="button"
@@ -141,12 +186,11 @@ export default function Register() {
                                 onMouseDown={() => setInputType("text")}
                                 onMouseUp={() => setInputType("password")}
                                 onMouseLeave={() => setInputType("password")}
-                                onTouchStart={() => setInputType("text")}
-                                onTouchEnd={() => setInputType("password")}
                             >
                                 {inputType === "text" ? <OpenEyeIcon /> : <CloseEyeIcon />}
                             </button>
                         </div>
+                        {actionData?.errors?.password && (<p>{actionData.errors.password}</p>)}
                     </span>
                     {isFocused && (
                         <div className="absolute top-[110%] left-0 w-full bg-gray-100 border border-gray-300 rounded-lg p-2 shadow-lg">
@@ -155,9 +199,9 @@ export default function Register() {
                                     <li key={index} className="flex justify-between items-center">
                                         <span>{validation}</span>
                                         {passwordErrors.includes(validation) ? (
-                                            <div className="bg-wrong rounded-[100%] h-[23px] w-[23px] left-2 border-[#960000] border-[2px]"></div>
+                                            <RejectedIcon />
                                         ) : (
-                                            <div className="bg-correct rounded-[100%] h-[23px] w-[23px] left-2 border-[#009000] border-[2px]"></div>
+                                            <AcceptedIcon />
                                         )}
                                     </li>
                                 ))}
@@ -168,10 +212,10 @@ export default function Register() {
                 <button className="mt-12 border-4 p-1 rounded-lg bg-slate-200 text-black w-[12rem]">
                     Registrarme
                 </button>
-            </fetcherRegister.Form>
-            <p className="mb-12">
+            </Form>
+            <p>
                 ¿Ya tienes cuenta?{" "}
-                <NavLink to={"../login"} className="underline">
+                <NavLink to={"/login"} className="underline">
                     Iniciar sesión
                 </NavLink>
             </p>
