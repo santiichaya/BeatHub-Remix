@@ -74,7 +74,7 @@ export default function Login() {
 
   return (
     <div className='w-full h-full flex flex-col justify-center items-center gap-20'>
-      <h1 className='text-4xl justify-self-start'>Inicia sesión!</h1>
+      <h1 className='text-4xl justify-self-start mt-12'>¡Inicia sesión!</h1>
 
       <Form
         method="post"
@@ -93,7 +93,7 @@ export default function Login() {
         <div className="m-0 p-0 w-full border-b border-black">
         <label className='mt-6 w-full flex justify-between relative pb-4 items-center'>Password:
           <input type={inputType} name="password" value={password} onChange={validatePassword} className={`w-[60%] border-2 rounded focus:outline-none p-1 text-black ${inputType === "text" ? "sm:text-sm md:text-xl h-11" : "text-3xl h-11"}`} />
-          <button type='button' className='absolute right-[10px] top-[10px]' onMouseDown={() => setInputType('text')} onMouseUp={() => setInputType('password')} onMouseLeave={() => setInputType('password')}>{inputType === 'text' ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
+          <button type='button' className='absolute right-[10px] top-[10px] text-black' onMouseDown={() => setInputType('text')} onMouseUp={() => setInputType('password')} onMouseLeave={() => setInputType('password')}>{inputType === 'text' ? (<OpenEyeIcon />) : (<CloseEyeIcon />)}</button>
         </label>
         {actionData?.errors?.password && (<p className='text-red-500'>{actionData.errors.password}</p>)}
         </div>

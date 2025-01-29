@@ -189,7 +189,7 @@ export default function Register() {
                             />
                             <button
                                 type="button"
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black"
                                 onMouseDown={() => setInputType("text")}
                                 onMouseUp={() => setInputType("password")}
                                 onMouseLeave={() => setInputType("password")}
