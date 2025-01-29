@@ -1,13 +1,12 @@
 import { useLoaderData, Link } from "@remix-run/react";
 import {LoaderFunction } from "@remix-run/node";
 import React from "react";
-import { getSpotifyToken } from "~/.server/spotify";
+import { getSpotifyAdminToken } from "~/.server/spotify";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const offset = parseInt(url.searchParams.get("offset") || "0");
-
-  const token = await getSpotifyToken();
+  const token = await getSpotifyAdminToken();
   const artistResponse = await fetch(
     `https://api.spotify.com/v1/search?q=genre:pop&type=artist&limit=6&offset=${offset}`,
     {

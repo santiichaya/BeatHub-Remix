@@ -1,11 +1,35 @@
-import { json, Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
+import { json, Links, Meta, Outlet, redirect, Scripts, useRouteError } from "@remix-run/react";
 import type { ErrorResponse, LinksFunction, LoaderFunction } from "@remix-run/node";
 
 import tailwindCSSURL from "./tailwind.css?url";
 import Header from "./components/Header";
 import { getCurrentUser } from "./utils/auth_server";
+import { getSpotifyAdminToken} from "./.server/spotify";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const adminToken = await getSpotifyAdminToken();
+  if (!adminToken) {
+    // Construye la URL de autenticación de Spotify
+    const SPOTIFY_AUTH_URL =
+      "https://accounts.spotify.com/authorize?" +
+      new URLSearchParams({
+        response_type: "code",
+        client_id: process.env.SPOTIFY_CLIENT_ID!,
+        redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
+        scope: [
+          "user-library-read",            // Leer la biblioteca del usuario
+          "playlist-read-private",        // Leer playlists privadas
+          "playlist-modify-private",      // Modificar playlists privadas
+          "playlist-modify-public",       // Modificar playlists públicas
+          "streaming",                    // Permitir la reproducción de música
+          "user-read-playback-state",     // Leer el estado de la reproducción
+          "user-modify-playback-state",   // Modificar el estado de la reproducción
+        ].join(" "), // Une todos los scopes con un espacio
+        state: "random_state_string", // Código aleatorio para proteger contra CSRF
+      }).toString();
+
+    return redirect(SPOTIFY_AUTH_URL);
+  }
   const user = await getCurrentUser(request);
   return json(
     {
