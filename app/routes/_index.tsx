@@ -1,5 +1,5 @@
 import { useLoaderData, Link } from "@remix-run/react";
-import {LoaderFunction } from "@remix-run/node";
+import { LoaderFunction } from "@remix-run/node";
 import React from "react";
 import { getSpotifyAdminToken } from "~/.server/spotify";
 
@@ -7,6 +7,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const offset = parseInt(url.searchParams.get("offset") || "0");
   const token = await getSpotifyAdminToken();
+  console.log("Token actual:", token);
+
   const artistResponse = await fetch(
     `https://api.spotify.com/v1/search?q=genre:pop&type=artist&limit=6&offset=${offset}`,
     {
@@ -15,14 +17,29 @@ export const loader: LoaderFunction = async ({ request }) => {
       },
     }
   );
+  const playlistAdmin = await fetch(
+    `https://api.spotify.com/v1/users/me/playlists?limit=6`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   const artistData = await artistResponse.json();
 
-  return { artists: artistData.artists.items, offset};
+  const playListdata = await playlistAdmin.json();
+
+  console.log(playListdata.items);
+  for (const playlist of playListdata.items) {
+    console.log(`Playlist: ${playlist.name}`);
+    console.log(`URL para obtener canciones: ${playlist.tracks.href}`);
+
+    return { artists: artistData.artists.items, offset };
+  }
 };
 
-
 export default function Index() {
-  const { artists, offset} = useLoaderData<typeof loader>();
+  const { artists, offset } = useLoaderData<typeof loader>();
   return (
     <React.Fragment>
       {/* Carrusel de Artistas */}
@@ -39,7 +56,9 @@ export default function Index() {
                 alt={artist.name}
                 className="w-24 h-24 mx-auto rounded-full object-cover mb-4"
               />
-              <h3 className="text-lg font-medium text-white text-center">{artist.name}</h3>
+              <h3 className="text-lg font-medium text-white text-center">
+                {artist.name}
+              </h3>
             </div>
           ))}
         </div>
