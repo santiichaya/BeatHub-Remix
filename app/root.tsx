@@ -26,6 +26,7 @@ export const loader: LoaderFunction = async ({ request }) => {
           "playlist-modify-public",       // Modificar playlists públicas
           "streaming",                    // Permitir la reproducción de música
           "user-read-playback-state",     // Leer el estado de la reproducción
+          "user-follow-read",
           "user-modify-playback-state",   // Modificar el estado de la reproducción
         ].join(" "), // Une todos los scopes con un espacio
         state: "random_state_string", // Código aleatorio para proteger contra CSRF
