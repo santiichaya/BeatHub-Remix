@@ -1,6 +1,6 @@
 import { getSpotifyToken } from "~/.server/spotify";
 
-export async function search(q: string, type: string = 'artist,album,tracks', offset: number = 0, limit: number = 20) {
+export async function search(q: string, type: string = 'artist,album,tracks', offset: number = 0, limit: number = 10) {
     const token = await getSpotifyToken();
 
     const query = new URLSearchParams({
