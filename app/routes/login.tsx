@@ -78,7 +78,7 @@ export default function Login() {
 
       <Form
         method="post"
-        className='bg-secondary w-[20rem] md:w-[45%] h-[60%] flex flex-col p-4 rounded-2xl items-center justify-evenly text-lg md:text-2xl'>
+        className='bg-secondary w-[20rem] md:w-[45%] h-[60%] flex flex-col p-4 rounded-2xl items-center justify-evenly text-lg md:text-2xl text-text'>
           <div className="m-0 p-0 w-full border-b border-black">
         <label className='mt-6 w-full flex justify-between pb-4 items-center'>
           Username:
