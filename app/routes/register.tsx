@@ -139,7 +139,7 @@ export default function Register() {
     }, [actionData]);
 
     return (
-        <div className="h-full flex flex-col justify-center items-center">
+        <div className="h-full flex flex-col justify-center items-center text-text">
             <h1 className="text-3xl md:text-4xl mb-12 mt-12">¡Regístrate!</h1>
             <Form
                 className="bg-secondary w-[20rem] md:w-[60%] max-w-[40rem] h-fit flex flex-col p-5 rounded-xl items-center text-lg md:text-2xl mb-12"
@@ -189,7 +189,7 @@ export default function Register() {
                             />
                             <button
                                 type="button"
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black"
                                 onMouseDown={() => setInputType("text")}
                                 onMouseUp={() => setInputType("password")}
                                 onMouseLeave={() => setInputType("password")}

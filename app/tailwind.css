@@ -68,30 +68,30 @@ aside.cara {
 
 aside.cara1 { /* Frente */
   transform: translateZ(50px);
-  height: 70px;
+  height: 50px;
 }
 
 aside.cara2 { /* arriba */
-  transform: rotateX(90deg) translateZ(45px) translateY(30px);
+  transform: rotateX(90deg) translateZ(25px) translateY(25px);
 }
 
 .cubo3d:hover aside.cara1 {
-  transition: all 1s;
+  transition: all 0.5s;
   height: 20px;
 }
 
 .cubo3d:hover aside.cara2 {
-  transition: all 1s;
+  transition: all 0.5s;
   transform: rotateX(90deg) translateZ(-4px) translateY(30px);
 }
 
 .cubo3d:active aside.cara1 {
-  transition: all 1s;
+  transition: all 0.75s;
   height: 0px;
 }
 
 .cubo3d:active aside.cara2 {
-  transition: all 1s;
+  transition: all 0.75s;
   transform: rotateX(90deg) translateZ(-24px) translateY(30px);
 }
 
