@@ -1,5 +1,5 @@
 import { useLoaderData, Link } from "@remix-run/react";
-import { loader } from "~/routes/_index";
+import { loader } from "~/routes/inicio.index";
 
 export default function Index() {
   const { artists, offset } = useLoaderData<typeof loader>();

@@ -6,7 +6,7 @@ type SongData = {
   id:string|number
   title: string;
   artist:string;
-  genre: string;
+  realease_date: string;
   photo: string;
   duration: number;
   url: string;
@@ -54,7 +54,7 @@ export function Song({ id, showOnlyPlayButton = false, songData }: SongsProps) {
             <div className="h-full w-4/5 flex items-center pl-4">
               <h3 className="w-[35%] text-start">{songData.title}</h3>
               <p className="text-sm font-light w-[40%] text-start">{songData.artist}</p>
-              <p className="text-xs font-light w-[25%] text-start">{songData.genre}</p>
+              <p className="text-xs font-light w-[25%] text-start">{songData.realease_date}</p>
             </div>
           </header>
           <footer className="w-1/5 flex justify-around items-center">
