@@ -1,51 +1,30 @@
-import { useState, useRef, Key } from "react";
 import PlayButton from "./PlayButton";
-import { Artist } from "@prisma/client";
+import { convert_ms_h } from "~/utils/convert_time";
 
 type SongData = {
-  id:string|number
+  id: string
   title: string;
-  artist:string;
-  realease_date: string;
+  artist: string;
+  name_album: string;
   photo: string;
   duration: number;
   url: string;
 };
 
 type SongsProps = {
-  id:Key;
+  token: string;
+  deviceId:string;
   showOnlyPlayButton?: boolean;
   songData: SongData;
 };
 
-export function Song({ id, showOnlyPlayButton = false, songData }: SongsProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  const toggleAudio = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play().catch((error) => {
-          console.error("Error al reproducir el audio:", error);
-        });
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const minutes = Math.trunc(songData.duration / 60);
-  const seconds = `0${Math.trunc(songData.duration % 60)}`;
-  const duracion = `${minutes}:${seconds.slice(-2)}`;
-
+export function Song({ token,deviceId,showOnlyPlayButton = false, songData }: SongsProps) {
   return (
     <article
-      className={`${
-        showOnlyPlayButton
+      className={`${showOnlyPlayButton
           ? "h-16 flex items-center justify-end bg-transparent p-0 m-0"
           : "h-12 w-[98%] flex justify-between bg-[#247BA0] rounded-lg overflow-hidden m-2"
-      }`}
+        }`}
     >
       {!showOnlyPlayButton && (
         <>
@@ -54,21 +33,19 @@ export function Song({ id, showOnlyPlayButton = false, songData }: SongsProps) {
             <div className="h-full w-4/5 flex items-center pl-4">
               <h3 className="w-[35%] text-start">{songData.title}</h3>
               <p className="text-sm font-light w-[40%] text-start">{songData.artist}</p>
-              <p className="text-xs font-light w-[25%] text-start">{songData.realease_date}</p>
+              <p className="text-xs font-light w-[25%] text-start">{songData.name_album}</p>
             </div>
           </header>
           <footer className="w-1/5 flex justify-around items-center">
-            <p className="text-sm font-thin">{duracion}</p>
-            <PlayButton onPlay={toggleAudio} estado={isPlaying} />
-            <audio ref={audioRef} src={songData.url} />
+            <p className="text-sm font-thin">{convert_ms_h(songData.duration)}</p>
+            <PlayButton trackUri={songData.url} accessToken={token} deviceId={deviceId} />
           </footer>
         </>
       )}
 
       {showOnlyPlayButton && (
         <footer className="mr-8 h-24 w-24 flex items-center justify-center">
-          <PlayButton onPlay={toggleAudio} estado={isPlaying} />
-          <audio ref={audioRef} src={songData.url} />
+          <PlayButton trackUri={songData.url} accessToken={token} deviceId={deviceId} />
         </footer>
       )}
     </article>
