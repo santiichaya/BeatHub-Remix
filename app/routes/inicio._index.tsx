@@ -50,9 +50,12 @@ export default function Index() {
           </Link>
         </div>
       </div>
-      {playlists.map((playlist: any) =>
-          <Playlist key={playlist.id} id={playlist.id} name={playlist.name} url={playlist.images[0].url}/>
-      )}
+      <div className="w-[100%] flex flex-wrap justify-center">
+        <h1 className="w-full text-3xl flex justify-center font-bold">Playlists de BeatHub</h1>
+        {playlists.map((playlist: any) =>
+            <Playlist key={playlist.id} id={playlist.id} name={playlist.name} url={playlist.images[0].url}/>
+        )}
+      </div>
     </React.Fragment>
   );
 }

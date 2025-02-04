@@ -21,6 +21,7 @@ const SearchBar: React.FC = () => {
                 value={query}
                 onChange={handleInputChange}
                 placeholder="Búsqueda..."
+                className='text-black'
             />
             <select name="type" value={type} onChange={handleTypeChange}>
                 <option value="artist,album,track">Todo</option>

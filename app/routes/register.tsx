@@ -140,7 +140,7 @@ export default function Register() {
 
     return (
         <div className="h-full flex flex-col justify-center items-center text-text">
-            <h1 className="text-3xl md:text-4xl mb-12 mt-12">¡Regístrate!</h1>
+            <h1 className="text-3xl md:text-4xl mb-12 mt-12 text-white">¡Regístrate!</h1>
             <Form
                 className="bg-secondary w-[20rem] md:w-[60%] max-w-[40rem] h-fit flex flex-col p-5 rounded-xl items-center text-lg md:text-2xl mb-12"
                 method="post"
@@ -221,7 +221,7 @@ export default function Register() {
                     Registrarme
                 </button>
             </Form>
-            <p>
+            <p className="text-white">
                 ¿Ya tienes cuenta?{" "}
                 <NavLink to={"/login"} className="underline">
                     Iniciar sesión
