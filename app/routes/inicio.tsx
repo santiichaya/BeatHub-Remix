@@ -24,12 +24,21 @@ export const loader: LoaderFunction = async ({ request }) => {
       },
     }
   );
+
+  const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const devices = await response.json();
+  console.log(devices);
   const playListData = await playlistAdmin.json();
-  return { artists: artistData.artists.items, offset, playlists: playListData.items };
+  return { artists: artistData.artists.items, offset, playlists: playListData.items, devices };
 };
 
 export default function InicioLayout() {
   return (
-      <Outlet/>
+    <Outlet />
   );
 }
