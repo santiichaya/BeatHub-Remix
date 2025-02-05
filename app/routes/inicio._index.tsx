@@ -36,14 +36,14 @@ export default function Index() {
         <div className="flex justify-between max-w-sm mx-auto mt-6">
           {offset > 0 && (
             <Link
-              to={`/?offset=${offset - 6}`}
+              to={`/inicio?offset=${offset - 6}`}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Anterior
             </Link>
           )}
           <Link
-            to={`/?offset=${offset + 6}`}
+            to={`/inicio?offset=${offset + 6}`}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Siguiente

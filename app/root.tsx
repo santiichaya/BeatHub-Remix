@@ -32,8 +32,6 @@ export const loader: LoaderFunction = async ({ request }) => {
         state: "random_state_string", // Código aleatorio para proteger contra CSRF
       }).toString();
       
-    console.log("SPOTIFY_AUTH_URL:", SPOTIFY_AUTH_URL);
-
     return redirect(SPOTIFY_AUTH_URL);
   }
   const user = await getCurrentUser(request);
@@ -96,6 +94,7 @@ export function ErrorBoundary() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </head>
       <body>
         <div className="min-h-screen flex items-center justify-center bg-primary">

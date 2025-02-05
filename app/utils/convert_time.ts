@@ -7,7 +7,7 @@ export function convert_ms_h(time_ms: number, type = "song") {
     duration =
       type === "playlist"
         ? minutes + " min " + `0${Math.trunc(minutes % 60)}`.slice(-2) + " s"
-        : minutes + ":" + `0${Math.trunc(minutes % 60)}`.slice(-2);
+        : minutes + ":" + `0${Math.trunc(time_ms % 60)}`.slice(-2);
   } else {
     duration = hours + " h " + minutes + " min";
   }

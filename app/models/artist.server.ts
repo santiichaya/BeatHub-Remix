@@ -1,7 +1,7 @@
-import { getSpotifyToken } from "~/.server/spotify";
+import { getSpotifyAdminToken } from "~/.server/spotify";
 
 export async function artist(q: string, offset: number) {
-    const token = await getSpotifyToken();
+    const token = await getSpotifyAdminToken();
 
     const query = new URLSearchParams({
         q: q,
