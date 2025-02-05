@@ -51,7 +51,7 @@ export default function Playlist() {
             });
             artistas = artistas.length === 1 ? artistas[0] : artistas.slice(0, -1).join(", ") + " y " + artistas[artistas.length - 1];
             return <li key={cancion.id}>
-              <Song token={token} deviceId={datosplaylists.devices.devices[0].id} songData={{
+              <Song token={token} deviceId={datosplaylists.devices.devices[0]?.id} songData={{
                 id: cancion.id,
                 title: cancion.name,
                 artist: artistas,

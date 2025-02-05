@@ -7,7 +7,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import { getCurrentUser } from "./utils/auth_server";
-import { getSpotifyAdminToken} from "./.server/spotify";
+import { getSpotifyAdminToken } from "./.server/spotify";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const adminToken = await getSpotifyAdminToken();
@@ -31,6 +31,8 @@ export const loader: LoaderFunction = async ({ request }) => {
         ].join(" "), // Une todos los scopes con un espacio
         state: "random_state_string", // Código aleatorio para proteger contra CSRF
       }).toString();
+      
+    console.log("SPOTIFY_AUTH_URL:", SPOTIFY_AUTH_URL);
 
     return redirect(SPOTIFY_AUTH_URL);
   }
