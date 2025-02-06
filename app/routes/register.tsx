@@ -139,7 +139,7 @@ export default function Register() {
     }, [actionData]);
 
     return (
-        <div className="h-full flex flex-col justify-center items-center text-text">
+        <div className="h-full flex flex-col justify-center items-center text-text-primary">
             <h1 className="text-3xl md:text-4xl mb-12 mt-12 text-white">¡Regístrate!</h1>
             <Form
                 className="bg-secondary w-[20rem] md:w-[60%] max-w-[40rem] h-fit flex flex-col p-5 rounded-xl items-center text-lg md:text-2xl mb-12"

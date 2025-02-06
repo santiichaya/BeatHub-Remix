@@ -15,7 +15,7 @@ export function Playlist({ name, url, id }: PlayListProp) {
                 <article className="flex">
                     <img className="h-12 md:h-20 sm:h-16 lg:h-24 w-auto rounded-l-[10px] lg:mr-4 mr-2" src={url} alt='laksnd' />
                     <div className='flex justify-center items-center'>
-                        <h3 className="text-white text-xs lg:text-xl sm:text-md md:text-lg">{name}</h3>
+                        <h3 className="text-text-secondary text-xs lg:text-xl sm:text-md md:text-lg">{name}</h3>
                     </div>
                 </article>
         </NavLink >

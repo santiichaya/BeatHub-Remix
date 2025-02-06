@@ -21,14 +21,8 @@ const SearchBar: React.FC = () => {
                 value={query}
                 onChange={handleInputChange}
                 placeholder="Búsqueda..."
-                className='text-black'
+                className='text-primary'
             />
-            <select name="type" value={type} onChange={handleTypeChange}>
-                <option value="artist,album,track">Todo</option>
-                <option value="artist">Artistas</option>
-                <option value="album">Álbumes</option>
-                <option value="track">Canciones</option>
-            </select>
             <button type="submit">Buscar</button>
         </Form>
     );

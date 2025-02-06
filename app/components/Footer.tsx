@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <div className="bg-secondary md:ml-20 h-fit">
-      <div className="flex flex-wrap w-[100%] justify-between text-text">
+      <div className="flex flex-wrap w-[100%] justify-between text-text-primary">
         <div className="w-[25%] m-0 flex justify-center align-middle h-fit p-4 flex-wrap"><p className="w-[100%] mb-4">Contáctanos en: beathub2024@gmail.com</p><p className="w-[100%]">Términos de <a href="https://google.com" target="_blank" rel="noopener noreferrer"  className="underline">privacidad</a> y <a href="google.com" target="_blank" rel="noopener noreferrer"  className="underline">seguridad</a></p></div>
         <div className="m-0 flex align-middle justify-end h-fit p-4 w-fit">
           <img src="/app/assets/onlyLogoWithBorder.png" alt="logo" className="h-12 w-12 sm:h-24 sm:w-24"/>

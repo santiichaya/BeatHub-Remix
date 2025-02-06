@@ -23,7 +23,7 @@ export function Song({ token,deviceId,showOnlyPlayButton = false, songData }: So
     <article
       className={`${showOnlyPlayButton
           ? "h-16 flex items-center justify-end bg-transparent p-0 m-0"
-          : "h-12 w-[98%] flex justify-between bg-[#247BA0] rounded-lg overflow-hidden m-2"
+          : "h-12 w-[98%] flex justify-between bg-[#247BA0] rounded-lg overflow-hidden m-2 text-text-secondary"
         }`}
     >
       {!showOnlyPlayButton && (
