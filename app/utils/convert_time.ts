@@ -6,9 +6,8 @@ export function convert_ms_h(time_ms: number, type = "song") {
   if (hours === 0) {
     duration =
       type === "playlist"
-        ? minutes + " min " + `0${Math.trunc(minutes % 60)}`.slice(-2) + " s"
-        : minutes + ":" + `0${Math.trunc((time_s % 60))}`.slice(-2);
-  } else {
+        ? minutes + " min " + `0${Math.trunc(time_ms % 60)}`.slice(-2) + " s"
+        : minutes + ":" + `0${Math.trunc(time_ms % 60)}`.slice(-2);  } else {
     duration = hours + " h " + minutes + " min";
   }
   return duration;

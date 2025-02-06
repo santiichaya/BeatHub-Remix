@@ -7,7 +7,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import { getCurrentUser } from "./utils/auth_server";
-import { getSpotifyAdminToken} from "./.server/spotify";
+import { getSpotifyAdminToken } from "./.server/spotify";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const adminToken = await getSpotifyAdminToken();
@@ -31,7 +31,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         ].join(" "), // Une todos los scopes con un espacio
         state: "random_state_string", // Código aleatorio para proteger contra CSRF
       }).toString();
-
+      
     return redirect(SPOTIFY_AUTH_URL);
   }
   const user = await getCurrentUser(request);
@@ -94,6 +94,7 @@ export function ErrorBoundary() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </head>
       <body>
         <div className="min-h-screen flex items-center justify-center bg-primary">
