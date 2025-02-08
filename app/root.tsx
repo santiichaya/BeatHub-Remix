@@ -64,6 +64,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </head>
       <body className="bg-primary min-h-screen flex flex-col">
         <div className="flex flex-col md:flex-row flex-grow">
@@ -94,7 +95,6 @@ export function ErrorBoundary() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </head>
       <body>
         <div className="min-h-screen flex items-center justify-center bg-primary">

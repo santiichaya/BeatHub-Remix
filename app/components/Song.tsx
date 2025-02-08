@@ -13,12 +13,11 @@ type SongData = {
 
 type SongsProps = {
   token: string;
-  deviceId:string;
   showOnlyPlayButton?: boolean;
   songData: SongData;
 };
 
-export function Song({ token,deviceId,showOnlyPlayButton = false, songData }: SongsProps) {
+export function Song({ token,showOnlyPlayButton = false, songData }: SongsProps) {
   return (
     <article
       className={`${showOnlyPlayButton
@@ -38,14 +37,14 @@ export function Song({ token,deviceId,showOnlyPlayButton = false, songData }: So
           </header>
           <footer className="w-1/5 flex justify-around items-center">
             <p className="text-sm font-thin">{convert_ms_h(songData.duration)}</p>
-            <PlayButton trackUri={songData.url} accessToken={token} deviceId={deviceId} />
+            <PlayButton accessToken={token} trackUri={songData.url} />
           </footer>
         </>
       )}
 
       {showOnlyPlayButton && (
         <footer className="mr-8 h-24 w-24 flex items-center justify-center">
-          <PlayButton trackUri={songData.url} accessToken={token} deviceId={deviceId} />
+          <PlayButton accessToken={token} trackUri={songData.url} />
         </footer>
       )}
     </article>

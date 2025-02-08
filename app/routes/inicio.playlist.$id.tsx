@@ -4,17 +4,16 @@ import { getSpotifyAdminToken } from "~/.server/spotify";
 import Song from "~/components/Song";
 import { random_colour } from "~/utils/colours";
 import { convert_ms_h } from "~/utils/convert_time";
+import { fetchWithRetry } from "~/utils/fetchWithRetry";
 
 export const loader: LoaderFunction = async ({ params }) => {
   const token = await getSpotifyAdminToken();
-  const playlistResponse = await fetch(`https://api.spotify.com/v1/playlists/${params.id}/tracks`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  const playlistData = await playlistResponse.json();
+  const options= {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const playlistData=await fetchWithRetry(`https://api.spotify.com/v1/playlists/${params.id}/tracks`,options);
   const canciones: Array<any> = [];
   let duration_ms = 0;
   playlistData.items.forEach((item: any) => {
@@ -53,7 +52,7 @@ export default function Playlist() {
             });
             artistas = artistas.length === 1 ? artistas[0] : artistas.slice(0, -1).join(", ") + " y " + artistas[artistas.length - 1];
             return <li key={cancion.id}>
-              <Song token={token} deviceId={datosplaylists.devices.devices[0]?.id} songData={{
+              <Song token={token} songData={{
                 id: cancion.id,
                 title: cancion.name,
                 artist: artistas,
