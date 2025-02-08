@@ -1,13 +1,18 @@
-type ArtistProps = {
-    id:string | number,
-    name: string;
-    profile_image?: string;
-  };
+import { NavLink } from "@remix-run/react";
 
-  
-  
-  export function Artist({ name, profile_image }: ArtistProps) {
-    return (
+type ArtistProps = {
+  id: string | number;
+  name: string;
+  profile_image?: string;
+};
+
+export function Artist({ id, name, profile_image }: ArtistProps) {
+  return (
+    <NavLink
+      reloadDocument
+      to={{
+        pathname: `artist/${id}`,
+      }}>
       <div className="artist">
         <img
           className="artist-img"
@@ -16,6 +21,6 @@ type ArtistProps = {
         />
         <span className="artist-name">{name || "Artista no encontrado"}</span>
       </div>
-    );
-  }
-  
+    </NavLink>
+  );
+}

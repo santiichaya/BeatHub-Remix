@@ -1,14 +1,15 @@
 import { Link, useMatches } from "@remix-run/react";
 import React from "react";
+import { Artist } from "~/components/Artist";
 import { Playlist } from "~/components/Playlist";
 
-
 export default function Index() {
-  const matches=useMatches();
-  const datosApi=matches.find(match=>match.id==="routes/inicio")?.data;
-  const offset=datosApi.offset;
-  const artists=datosApi.artists;
-  const playlists=datosApi.playlists;
+  const matches = useMatches();
+  const datosApi = matches.find((match) => match.id === "routes/inicio")?.data;
+  const offset = datosApi.offset;
+  const artists = datosApi.artists;
+  console.log(artists);
+  const playlists = datosApi.playlists;
   return (
     <React.Fragment>
       {/* Carrusel de Artistas */}
@@ -20,14 +21,11 @@ export default function Index() {
               key={artist.id}
               className="p-4 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
             >
-              <img
-                src={artist.images[0]?.url}
-                alt={artist.name}
-                className="w-24 h-24 mx-auto rounded-full object-cover mb-4"
+              <Artist
+                id={artist.id}
+                name={artist.name}
+                profile_image={artist.images[0]?.url}
               />
-              <h3 className="text-lg font-medium text-white text-center">
-                {artist.name}
-              </h3>
             </div>
           ))}
         </div>
@@ -50,11 +48,20 @@ export default function Index() {
           </Link>
         </div>
       </div>
+
+      {/* Playlists */}
       <div className="w-[100%] flex flex-wrap justify-center">
-        <h1 className="w-full text-3xl flex justify-center font-bold">Playlists de BeatHub</h1>
-        {playlists.map((playlist: any) =>
-            <Playlist key={playlist.id} id={playlist.id} name={playlist.name} url={playlist.images[0].url}/>
-        )}
+        <h1 className="w-full text-3xl flex justify-center font-bold">
+          Playlists de BeatHub
+        </h1>
+        {playlists.map((playlist: any) => (
+          <Playlist
+            key={playlist.id}
+            id={playlist.id}
+            name={playlist.name}
+            url={playlist.images[0]?.url}
+          />
+        ))}
       </div>
     </React.Fragment>
   );
