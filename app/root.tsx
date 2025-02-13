@@ -8,8 +8,11 @@ import Footer from "./components/Footer";
 
 import { getCurrentUser } from "./utils/auth_server";
 import { getSpotifyAdminToken } from "./.server/spotify";
+import { commitSession, getSession } from "./utils/session";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.
+  const session = await getSession(cookieHeader); //Obtengo la sesión.
   const adminToken = await getSpotifyAdminToken();
   if (!adminToken) {
     // Construye la URL de autenticación de Spotify
@@ -31,13 +34,18 @@ export const loader: LoaderFunction = async ({ request }) => {
         ].join(" "), // Une todos los scopes con un espacio
         state: "random_state_string", // Código aleatorio para proteger contra CSRF
       }).toString();
-      
+
     return redirect(SPOTIFY_AUTH_URL);
   }
   const user = await getCurrentUser(request);
   return json(
     {
       isLoggedIn: user !== null
+    },
+    {
+      headers:{
+        "Set-Cookie":await commitSession(session),
+      }
     }
   )
 }

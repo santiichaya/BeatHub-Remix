@@ -8,7 +8,6 @@ export default function Index() {
   const datosApi = matches.find((match) => match.id === "routes/inicio")?.data;
   const offset = datosApi.offset;
   const artists = datosApi.artists;
-  console.log(artists);
   const playlists = datosApi.playlists;
   return (
     <React.Fragment>
@@ -25,6 +24,7 @@ export default function Index() {
                 id={artist.id}
                 name={artist.name}
                 profile_image={artist.images[0]?.url}
+                offset={offset}
               />
             </div>
           ))}
@@ -40,12 +40,12 @@ export default function Index() {
               Anterior
             </Link>
           )}
-          <Link
+          {offset<24 &&( <Link
             to={`/inicio?offset=${offset + 6}`}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Siguiente
-          </Link>
+          </Link>)}
         </div>
       </div>
 

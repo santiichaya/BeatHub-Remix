@@ -1,12 +1,19 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData, useMatches } from "@remix-run/react";
+import { useLoaderData} from "@remix-run/react";
 import { getSpotifyAdminToken } from "~/.server/spotify";
 import Song from "~/components/Song";
 import { fetchWithRetry } from "~/utils/fetchWithRetry";
+import { getSession } from "~/utils/session";
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
+  const offset = params.offset ?? "0";
   const token = await getSpotifyAdminToken();
-  console.log(token);
+  const cookie = await request.headers.get('cookie');
+  const session = await getSession(cookie);
+  const claveArtista = `https://api.spotify.com/v1/search?q=genre:pop&type=artist&limit=6&offset=${offset}`;
+  const datosArtist = session.get(claveArtista).find((artista: any) => {
+    return artista.id === params.id;
+  });
   const options = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -17,19 +24,14 @@ export const loader: LoaderFunction = async ({ params }) => {
     `https://api.spotify.com/v1/artists/${params.id}/top-tracks?limit=10`,
     options
   );
-  console.log(canciones);
 
   if (!canciones) throw new Response("Artista no encontrado", { status: 404 });
 
-  return { canciones:canciones.tracks, id: params.id, token };
+  return { canciones: canciones.tracks, token, datosArtist };
 };
 
 export default function ArtistDetail() {
-  const { canciones, id, token } = useLoaderData<typeof loader>();
-  const matches = useMatches();
-  const datosApi = matches.find((match) => match.id === "routes/inicio")?.data;
-  let datosArtist = datosApi.artists.find((artist: any) => artist.id === id);
-  console.log(canciones);
+  const { canciones, token, datosArtist} = useLoaderData<typeof loader>();
   return (
     <div className="artist-detail">
       <img
@@ -46,12 +48,12 @@ export default function ArtistDetail() {
       </p>
       <ul>
 
-        {canciones.map((cancion:any) => {
+        {canciones.map((cancion: any) => {
           let artistas = cancion.artists.map((artista: any) => {
             return artista.name;
           });
-          artistas = artistas.length === 1? artistas[0]: artistas.slice(0, -1).join(", ") +" y " + artistas[artistas.length - 1];
-         return <li key={cancion.id}>
+          artistas = artistas.length === 1 ? artistas[0] : artistas.slice(0, -1).join(", ") + " y " + artistas[artistas.length - 1];
+          return <li key={cancion.id}>
             <Song
               token={token}
               songData={{

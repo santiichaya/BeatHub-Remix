@@ -6,6 +6,7 @@ if(!process.env.AUTH_COOKIE_SECRET){
 export const userIdCookie=createCookie("BeatHub_UserId",{
     secrets:[process.env.AUTH_COOKIE_SECRET],
     httpOnly:true,
-    secure:true,
-    maxAge:60*60*2 //Expira en 2 hora
+    secure:true
 });
+
+

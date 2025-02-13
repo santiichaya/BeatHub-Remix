@@ -3,7 +3,7 @@ import { useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import { requiredLoggedInUser } from "~/utils/auth_server";
-import { destroySession, getSession } from "~/utils/session";
+import { commitSession, getSession } from "~/utils/session";
 
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -16,9 +16,11 @@ export const action: ActionFunction = async ({ request }) => {
     if (datosFormulario.get("action")=="logout") { //Destruye la sesión
         const cookie = request.headers.get("cookie");
         const session = await getSession(cookie);
+        session.unset("userId"); //Borro el id del usuario
+        session.unset("username"); //Borro el nombre del usuario
         return json("ok",
             {
-                headers: { "Set-Cookie": await destroySession(session) },
+                headers: { "Set-Cookie": await commitSession(session) },
             }
         )
     }
