@@ -2,7 +2,7 @@ import db from "../db.server";
 import { handleDelete } from "./utils";
 
 
-export function getUserById(id:number) {
+export function getUserById(id:string) {
     return db.user.findUnique({
       where: {
         id,
@@ -35,18 +35,17 @@ export function getAllUsers(){
     });
 }
 
-export function createUser(username:string,password:string,email:string,time:number=0){
+export function createUser(username:string,password:string,email:string){
    return db.user.create({
         data:{
             username,
             password,
             email,
-            time,
         }
     })
 }
 
-export function deleteUser(id:number) {
+export function deleteUser(id:string) {
     return handleDelete(async() =>{
         const user=await getUserById(id);
 
@@ -61,3 +60,5 @@ export function deleteUser(id:number) {
           });
     });
   }
+
+  

@@ -11,28 +11,39 @@ function PlayButton({ accessToken, trackUri }: PlayButtonProps) {
   
   // Inicializar el reproductor cuando el SDK esté listo
   useEffect(() => {
-    const newPlayer = new window.Spotify.Player({
-      name: "Mi BeatHub User",
-      getOAuthToken: (cb) => cb(accessToken),
-      volume: 0.5,
+    const waitForSpotify = () => {
+      return new Promise((resolve) => {
+        if (window.Spotify) {
+          resolve(window.Spotify);
+        } else {
+          window.onSpotifyWebPlaybackSDKReady = () => resolve(window.Spotify);
+        }
+      });
+    };
+  
+    waitForSpotify().then((Spotify) => {
+      const newPlayer = new Spotify.Player({
+        name: "Mi BeatHub User",
+        getOAuthToken: (cb) => cb(accessToken),
+        volume: 0.5,
+      });
+  
+      newPlayer.addListener("ready", async ({ device_id }) => {
+        console.log("✅ Reproductor listo con device_id:", device_id);
+        await transferPlaybackToDevice(device_id);
+      });
+  
+      newPlayer.addListener("player_state_changed", (state) => {
+        if (!state) return;
+        console.log("🎵 Estado del reproductor cambiado:", state);
+        setIsPlaying(!state.paused);
+      });
+  
+      setPlayer(newPlayer);
+      newPlayer.connect();
     });
   
-    newPlayer.addListener("ready", async ({ device_id }) => {
-      console.log("✅ Reproductor listo con device_id:", device_id);
-      await transferPlaybackToDevice(device_id);
-    });
-  
-    newPlayer.addListener("player_state_changed", (state) => {
-      if (!state) return;
-      console.log("🎵 Estado del reproductor cambiado:", state);
-      setIsPlaying(!state.paused);
-    });
-    // Intentar definir el robustness level
-    newPlayer._options.enableRobustness = true;
-    newPlayer.connect();
-    setPlayer(newPlayer);  
-    return () => newPlayer.disconnect();
-  }, []);
+  }, [accessToken]);
 
   // Transferir la reproducción al dispositivo del SDK
   const transferPlaybackToDevice = async (deviceId: string) => {
@@ -60,7 +71,6 @@ function PlayButton({ accessToken, trackUri }: PlayButtonProps) {
 
   // Reproducir la canción específica
   const playTrack = async () => {
-
     try {
       const response = await fetch("https://api.spotify.com/v1/me/player/play", {
         method: "PUT",
@@ -88,8 +98,8 @@ function PlayButton({ accessToken, trackUri }: PlayButtonProps) {
       console.error("⚠️ El reproductor no está inicializado.");
       return;
     }
-      await player.togglePlay();
-      setIsPlaying(!isPlaying);
+    await player.togglePlay();
+    setIsPlaying(!isPlaying);
   };
 
   return (
