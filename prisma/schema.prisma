@@ -7,8 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Prisma Schema
-
 model User {
   id              String    @id @default(cuid())
   username        String    @unique
@@ -34,10 +32,11 @@ model Song {
   id          String       @id @default(cuid())
   title       String
   apiId       String       @unique
-  releaseDate DateTime? // Fecha de lanzamiento
-  artistName  String       
+  artistName  String 
+  name_album  String      
   photo_song  String
-  duration    Int?       // Duración en segundos
+  duration    Int
+  url         String
   likedBy     User[]     @relation("LikedSongs")
   favoritedBy User[]    @relation("FavoriteSong")
   playlists   Playlist[]
@@ -48,5 +47,5 @@ model Artist {
   name         String
   apiId        String       @unique
   photo_artist String
-  likedBy      User[]       @relation("LikedArtists") // ✅ Relación N:M entre User y Artist
+  likedBy      User[]       @relation("LikedArtists")
 }

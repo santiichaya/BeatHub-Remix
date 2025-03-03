@@ -27,12 +27,13 @@ export function Song({ token, songData, likedSongs }: SongsProps) {
       {
         title: songData.title,
         apiId: songData.id,
-        artistId: songData.artist,
-        releaseDate: null, // Ajusta si es necesario
+        artistName: songData.artist,
+        name_album:songData.name_album,
         photo_song: songData.photo,
         duration: songData.duration,
+        url:songData.url
       },
-      { method: "POST" }
+      { method: "POST",}
     );
   };
 
@@ -51,7 +52,7 @@ export function Song({ token, songData, likedSongs }: SongsProps) {
 
         {/* Botón de Like */}
         <button onClick={handleLike} className="p-2">
-          {likedSongs.some((song) => song.id === songData.id) ? <HeartSolidIcon /> : <HeartIcon />}
+          {likedSongs.some((song) => song.apiId === songData.id) ? <HeartSolidIcon /> : <HeartIcon />}
         </button>
         <PlayButton accessToken={token} trackUri={songData.url} />
       </footer>

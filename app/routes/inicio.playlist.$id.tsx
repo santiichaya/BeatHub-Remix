@@ -3,12 +3,17 @@ import { useLoaderData, useMatches } from "@remix-run/react";
 import { getSpotifyAdminToken } from "~/.server/spotify";
 import Song from "~/components/Song";
 import { addSongToLikes, getUserLikedSongs, isSongLikedByUser, removeSongFromLikes } from "~/models/song.server";
+import { requiredLoggedInUser } from "~/utils/auth_server";
 import { random_colour } from "~/utils/colours";
 import { convert_ms_h } from "~/utils/convert_time";
 import { fetchWithRetry } from "~/utils/fetchWithRetry";
 import { getSession } from "~/utils/session";
+import { z } from "zod";
+import { validateForm } from "~/utils/validateform";
+
 
 export const loader: LoaderFunction = async ({ request,params }) => {
+  await requiredLoggedInUser(request);
   const cookie = await request.headers.get('cookie');
   const session = await getSession(cookie);
   const user=session.get('userId');
@@ -30,33 +35,46 @@ export const loader: LoaderFunction = async ({ request,params }) => {
   return { canciones, id: params.id, duration_ms, token, colour ,likedSongs,user};
 };
 
+export const songSchema = z.object({
+  title: z.string().min(1, "El título es requerido"),
+  apiId: z.string().min(1, "El API ID es requerido"),
+  artistName: z.string().min(1, "El nombre del artista es requerido"),
+  name_album: z.string().min(1, "El nombre del álbum es requerido"),
+  photo_song: z.string().url("La URL de la foto no es válida"),
+  duration: z.coerce.number().positive("La duración debe ser un número positivo"), //Con coerce convertimos a numero el duration que viene como string en el fetcher.
+  url: z.string().url("La URL de la pista no es válida"),
+});
+
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const cookie = await request.headers.get('cookie');
+  await requiredLoggedInUser(request);
+  const cookie = request.headers.get("cookie");
   const session = await getSession(cookie);
-  const user = session.get('userId');
-  if (!user) return json({ error: "No autenticado" }, { status: 401 });
-
-  const { songId, title, apiId, artistId, releaseDate, photo_song, duration } = await request.json();
-  if (!songId || !title || !apiId || !artistId || !photo_song) {
-    return json({ error: "Faltan datos de la canción" }, { status: 400 });
-  }
-
-  const isLiked = await isSongLikedByUser(user.id, songId);
-
-  if (isLiked) {
-    await removeSongFromLikes(user.id, songId);
-    return json({ success: true, liked: false });
-  } else {
-    await addSongToLikes(user.id, songId, { title, artistId, releaseDate, photo_song, duration });
-    return json({ success: true, liked: true });
-  }
+  const user = session.get("userId");
+  const formData = await request.formData();
+  return validateForm(
+    formData,
+    songSchema,
+    async (data) => {
+      const { title, apiId, artistName, name_album, photo_song, duration,url } = data;
+      const isLiked = await isSongLikedByUser(user, apiId);
+      if (isLiked) {
+        await removeSongFromLikes(user, apiId);
+        return json({ success: true, liked: false });
+      } else {
+        await addSongToLikes(user, apiId, title, artistName, photo_song, name_album, duration,url);
+        return json({ success: true, liked: true });
+      }
+    },
+    (errors) => json({ errors }, { status: 400 })
+  );
 };
+
+
 
 
 export default function Playlist() {
   const { canciones, id, duration_ms, token, colour,likedSongs} = useLoaderData<typeof loader>();
-  console.log(canciones);
   const matches = useMatches(); //El hook useMatches sirve para poder obtener datos de las rutas padres desde las rutas hijas sin tener que pasar props manualmente, muy parecido al useContext().
   const datosplaylists = matches.find(match => match.id === 'routes/inicio')?.data; //Siempre es mejor utilizar match.id ya que es el identificador único de la ruta, el cual Remix genera automáticamente a partir de la estructura de archivos de mi proyecto.
   let datosplaylist = datosplaylists.playlists.filter((playlist: any) => {
