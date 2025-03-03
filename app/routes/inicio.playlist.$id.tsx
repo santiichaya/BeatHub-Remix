@@ -10,6 +10,7 @@ import { fetchWithRetry } from "~/utils/fetchWithRetry";
 import { getSession } from "~/utils/session";
 import { z } from "zod";
 import { validateForm } from "~/utils/validateform";
+import { addSongToPlaylist, createPlaylistWithSong, getUserPlaylists } from "~/models/playlist.server";
 
 
 export const loader: LoaderFunction = async ({ request,params }) => {
@@ -18,6 +19,7 @@ export const loader: LoaderFunction = async ({ request,params }) => {
   const session = await getSession(cookie);
   const user=session.get('userId');
   const likedSongs=await getUserLikedSongs(user);
+  const playlists = await getUserPlaylists(user);
   const token = await getSpotifyAdminToken();
   const options = {
     headers: {
@@ -32,7 +34,7 @@ export const loader: LoaderFunction = async ({ request,params }) => {
     duration_ms = duration_ms + item.track.duration_ms;
   });
   const colour = random_colour();
-  return { canciones, id: params.id, duration_ms, token, colour ,likedSongs,user};
+  return { canciones, id: params.id, duration_ms, token, colour ,likedSongs,playlists};
 };
 
 export const songSchema = z.object({
@@ -45,36 +47,76 @@ export const songSchema = z.object({
   url: z.string().url("La URL de la pista no es válida"),
 });
 
+export const PlaylistSchema = songSchema.extend({
+  playlistId: z.string().min(1, "El ID de la playlist es requerido"),
+});
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   await requiredLoggedInUser(request);
+
   const cookie = request.headers.get("cookie");
   const session = await getSession(cookie);
-  const user = session.get("userId");
+  const userId = session.get("userId");
+
   const formData = await request.formData();
-  return validateForm(
-    formData,
-    songSchema,
-    async (data) => {
-      const { title, apiId, artistName, name_album, photo_song, duration,url } = data;
-      const isLiked = await isSongLikedByUser(user, apiId);
-      if (isLiked) {
-        await removeSongFromLikes(user, apiId);
-        return json({ success: true, liked: false });
-      } else {
-        await addSongToLikes(user, apiId, title, artistName, photo_song, name_album, duration,url);
-        return json({ success: true, liked: true });
-      }
-    },
-    (errors) => json({ errors }, { status: 400 })
-  );
+  const actionType = formData.get("_action");
+
+  switch (actionType) {
+    case "song":
+      return validateForm(
+        formData,
+        songSchema,
+        async (data) => {
+          const { title, apiId, artistName, name_album, photo_song, duration, url } = data;
+
+          const isLiked = await isSongLikedByUser(userId, apiId);
+          if (isLiked) {
+            await removeSongFromLikes(userId, apiId);
+            return json({ success: true, liked: false });
+          } else {
+            await addSongToLikes(userId, apiId, title, artistName, photo_song, name_album, duration, url);
+            return json({ success: true, liked: true });
+          }
+        },
+        (errors) => json({ errors }, { status: 400 })
+      );
+
+    case "createPlaylistWithSong":
+      return validateForm(
+        formData,
+        songSchema,
+        async (data) => {
+          const { apiId, title, artistName, name_album, photo_song, duration, url } = data;
+
+          await createPlaylistWithSong(userId, apiId, title, artistName, name_album, photo_song, duration, url);
+          return json({ success: true });
+        },
+        (errors) => json({ errors }, { status: 400 })
+      );
+
+    case "addSongToPlaylist":
+      return validateForm(
+        formData,
+        PlaylistSchema,
+        async (data) => {
+          const { playlistId, apiId, title, artistName, name_album, photo_song, duration, url } = data;
+
+          await addSongToPlaylist(playlistId, apiId, title, artistName, name_album, photo_song, duration, url);
+          return json({ success: true });
+        },
+        (errors) => json({ errors }, { status: 400 })
+      );
+
+    default:
+      return json({ error: "Acción no válida" }, { status: 400 });
+  }
 };
 
 
 
 
 export default function Playlist() {
-  const { canciones, id, duration_ms, token, colour,likedSongs} = useLoaderData<typeof loader>();
+  const { canciones, id, duration_ms, token, colour,likedSongs,playlists} = useLoaderData<typeof loader>();
   const matches = useMatches(); //El hook useMatches sirve para poder obtener datos de las rutas padres desde las rutas hijas sin tener que pasar props manualmente, muy parecido al useContext().
   const datosplaylists = matches.find(match => match.id === 'routes/inicio')?.data; //Siempre es mejor utilizar match.id ya que es el identificador único de la ruta, el cual Remix genera automáticamente a partir de la estructura de archivos de mi proyecto.
   let datosplaylist = datosplaylists.playlists.filter((playlist: any) => {
@@ -110,7 +152,9 @@ export default function Playlist() {
                 duration: cancion.duration_ms,
                 url: cancion.uri
               }}
-              likedSongs={likedSongs}></Song>
+              likedSongs={likedSongs} 
+              playlists={playlists}>
+              </Song>
             </li>
           })}
         </ul>

@@ -39,6 +39,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   return { artists: session.get(claveArtista), offset, playlists: session.get(clavePlaylist)};
 };
 
+
+
   export default function InicioLayout() {
     return (
       <Outlet/>

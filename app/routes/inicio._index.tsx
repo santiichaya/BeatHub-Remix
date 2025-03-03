@@ -3,12 +3,14 @@ import React from "react";
 import { Artist } from "~/components/Artist";
 import { Playlist } from "~/components/Playlist";
 
+
+
 export default function Index() {
   const matches = useMatches();
-  const datosApi = matches.find((match) => match.id === "routes/inicio")?.data;
-  const offset = datosApi.offset;
-  const artists = datosApi.artists;
-  const playlists = datosApi.playlists;
+  const datos = matches.find((match) => match.id === "routes/inicio")?.data;
+  const offset = datos.offset;
+  const artists = datos.artists;
+  const playlists = datos.playlists;
   return (
     <React.Fragment>
       {/* Carrusel de Artistas */}
@@ -25,7 +27,7 @@ export default function Index() {
                 name={artist.name}
                 profile_image={artist.images[0]?.url}
                 offset={offset}
-              />
+               />
             </div>
           ))}
         </div>
@@ -40,7 +42,7 @@ export default function Index() {
               Anterior
             </Link>
           )}
-          {offset<24 &&( <Link
+          {offset < 24 && (<Link
             to={`/inicio?offset=${offset + 6}`}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
