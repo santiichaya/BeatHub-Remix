@@ -67,8 +67,8 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
   );
 
   return (
-    <>
-      <article className="h-12 w-[98%] flex justify-between bg-[#247BA0] rounded-lg overflow-hidden m-2 text-text-secondary">
+    <div className="w-full flex justify-center">
+      <article className="h-12 w-[95%] flex justify-between bg-black bg-opacity-70 rounded-lg overflow-hidden m-2 text-text-secondary">
         <header className="w-4/5 flex items-center">
           <img src={songData.photo} className="h-12 rounded-lg" alt={`${songData.title} cover`} />
           <div className="h-full w-4/5 flex items-center pl-4">
@@ -141,7 +141,7 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
           ➕ Nueva lista
         </button>
       </ReactModal>
-    </>
+    </div>
   );
 }
 

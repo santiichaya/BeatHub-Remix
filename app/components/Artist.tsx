@@ -11,11 +11,11 @@ export function Artist({ id, name, profile_image, offset = 0 }: ArtistProps) {
 
   return (
       <NavLink reloadDocument to={{ pathname: `artist/${id}/${offset}` }}>
-        <div className="artist">
+        <div>
           <img
-            className="artist-img"
             src={profile_image || ""}
             alt={name || "Artista no encontrado"}
+            className="w-[100%] aspect-square"
           />
           <span className="artist-name">{name || "Artista no encontrado"}</span>
         </div>

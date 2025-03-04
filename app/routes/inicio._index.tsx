@@ -20,7 +20,7 @@ export default function Index() {
           {artists.map((artist: any) => (
             <div
               key={artist.id}
-              className="p-4 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              className="p-4 bg-gray-800 rounded-lg hover:shadow-lg transition-shadow"
             >
               <Artist
                 id={artist.id}

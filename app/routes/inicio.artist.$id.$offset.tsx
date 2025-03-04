@@ -162,27 +162,35 @@ export default function ArtistDetail() {
   };
 
   return (
-    <div className="artist-detail">
-      <img
-        className="artist-detail-img"
-        src={datosArtist.images[0]?.url || ""}
-        alt={datosArtist.name}
-      />
-      <h1 className="artist-detail-name">{datosArtist.name}</h1>
-      <button
-        onClick={handleFollow}
-        className={`mt-2 px-4 py-2 rounded-lg font-medium transition ${isFollowing ? "bg-gray-500 text-white" : "bg-blue-500 text-white"
-          }`}
-      >
-        {isFollowing ? "Siguiendo" : "Seguir"}
-      </button>
+    <div className="w-[100%] min-h-screen overflow-hidden bg-cover bg-center pb-24"
+      style={{
+        backgroundImage: `url(${datosArtist.images[0]?.url})`
+      }}
+    >
+      <div className="bg-gradient-to-b from-black to-transparent p-8 pt-4">
+        <div className="flex justify-between">
+          <h1 className="text-8xl">{datosArtist.name}</h1>
+          <button
+            onClick={handleFollow}
+            className={`mt-2 px-4 py-2 rounded-lg font-medium transition w-28 h-16 align-middle ${isFollowing ? "bg-gray-500 text-white" : "bg-blue-500 text-white"
+              }`}
+          >
+            {isFollowing ? "Siguiendo" : "Seguir"}
+          </button>
+        </div>
 
-      <p className="artist-detail-genres">
-        Géneros: {datosArtist.genres?.join(", ") || "No disponible"}
-      </p>
-      <p className="artist-detail-followers">
-        Seguidores: {datosArtist.followers?.total.toLocaleString() || "N/A"}
-      </p>
+        <div className="flex justify-between mb-[25rem]">
+          <p>
+            Géneros: {datosArtist.genres?.join(", ") || "No disponible"}
+          </p>
+          <p>
+            Seguidores: {datosArtist.followers?.total.toLocaleString() || "N/A"}
+          </p>
+        </div>
+      </div>
+
+
+
 
       <ul>
         {canciones.map((cancion: any) => {
@@ -202,7 +210,7 @@ export default function ArtistDetail() {
                   duration: cancion.duration_ms,
                   url: cancion.uri,
                 }}
-                likedSongs={likedSongs} 
+                likedSongs={likedSongs}
                 playlists={playlists} />
             </li>
           );

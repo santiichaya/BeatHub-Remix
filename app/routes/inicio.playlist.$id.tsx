@@ -128,7 +128,7 @@ export default function Playlist() {
   return (
     <div className="bg-grey m-8 text-text-white rounded-2xl overflow-hidden pb-4">
       <div className="flex mb-8" style={{ backgroundImage: `linear-gradient(to bottom, ${colour}, #121212)` }}>
-        <img src={datosplaylist.images[0].url} className="w-[20%] h-auto rounded-2xl" alt={`${datosplaylist.name} cover`} />
+        <img src={datosplaylist.images[0].url} className="w-[20%] h-auto rounded-2xl rounded-tr-none rounded-bl-none" alt={`${datosplaylist.name} cover`} />
         <div className="w-[80%] flex flex-col justify-between p-8">
           <h1 className="text-3xl">{datosplaylist.name}</h1>
           <p>{datosplaylist.description}</p>
