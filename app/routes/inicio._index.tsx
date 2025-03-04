@@ -14,7 +14,7 @@ export default function Index() {
   return (
     <React.Fragment>
       {/* Carrusel de Artistas */}
-      <div className="text-center mb-8 text-text-secondary">
+      <div className="text-center mb-8 text-text-secondary pt-4">
         <h2 className="text-3xl font-bold mb-4">Artistas Populares</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {artists.map((artist: any) => (
@@ -27,27 +27,38 @@ export default function Index() {
                 name={artist.name}
                 profile_image={artist.images[0]?.url}
                 offset={offset}
-               />
+              />
             </div>
           ))}
         </div>
 
         {/* Botones de Paginación */}
         <div className="flex justify-between max-w-sm mx-auto mt-6">
-          {offset > 0 && (
-            <Link
-              to={`/inicio?offset=${offset - 6}`}
+          <div>
+            {offset > 0 && (
+              <Link
+                to={`/inicio?offset=${offset - 6}`}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Anterior
+              </Link>
+            
+            )}
+          </div>
+
+          <div>
+            {offset < 24 && (
+              <Link
+              to={`/inicio?offset=${offset + 6}`}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              Anterior
+              Siguiente
             </Link>
-          )}
-          {offset < 24 && (<Link
-            to={`/inicio?offset=${offset + 6}`}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Siguiente
-          </Link>)}
+            )}
+
+
+          </div>
+
         </div>
       </div>
 
