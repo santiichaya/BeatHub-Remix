@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         'primary': '#000000', //000000,
-        'secondary': '#9CFFFA', //E0479E, ED254E, 4DA1A9, D81159, 123456, 335F8A, FDDDFF, 7D53DE, 23F0C7, 153B50, 9CFFFA, E85F5C, 17BEBB, F0EDEE, 5EB1BF, B4ADEA
+        'secondary': '#576CA8', //4DA1A9, FDDDFF, 17BEBB, F0EDEE, 5EB1BF, B4ADEA
         'header': '#FFFFFF',
         'text-primary': '#000000',
         'text-secondary': '#FFFFFF', //FFFFFF, 000000

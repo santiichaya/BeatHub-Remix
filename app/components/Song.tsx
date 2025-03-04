@@ -26,8 +26,12 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
   const fetcher = useFetcher();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleLike = () => {
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 300); // Duración de la animación
+
     fetcher.submit(
       {
         _action: "song",
@@ -80,9 +84,13 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
         <footer className="w-1/5 flex justify-around items-center">
           <p className="text-sm font-thin">{convert_ms_h(songData.duration)}</p>
 
-          <button onClick={handleLike} className="p-2">
+          <button
+            onClick={handleLike}
+            className={`p-2 transition-transform duration-300 ${isAnimating ? "scale-125" : "scale-100"}`}
+          >
             {likedSongs.some((song) => song.apiId === songData.id) ? <HeartSolidIcon /> : <HeartIcon />}
           </button>
+
 
           <button onClick={() => setIsModalOpen(true)} className="p-2"><AddPlayList /></button>
 
