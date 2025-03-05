@@ -10,7 +10,7 @@ type ArtistProps = {
 export function Artist({ id, name, profile_image, offset = 0 }: ArtistProps) {
 
   return (
-      <NavLink reloadDocument to={{ pathname: `artist/${id}/${offset}` }}>
+      <NavLink reloadDocument to={{ pathname: `../inicio/artist/${id}/${offset}` }}>
         <div>
           <img
             src={profile_image || ""}

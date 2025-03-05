@@ -1,98 +1,99 @@
-import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import { search } from "~/models/search.server";
-import Song from "~/components/Song";
+import { useLoaderData } from "@remix-run/react";
 import SearchBar from "~/components/SearchBar";
-import SearchResults from "~/components/SearchResults";
+import Song from "~/components/Song";
 import { Artist } from "~/components/Artist";
-import Album from "~/components/Album";
-import { Key } from "react";
+import { search } from "~/models/search.server";
+import { getSpotifyAdminToken } from "~/.server/spotify";
+import { getSession } from "~/utils/session";
+import { getUserLikedSongs } from "~/models/song.server";
+import { getUserPlaylists } from "~/models/playlist.server";
 
 export const loader = async ({ request }: { request: Request }) => {
+  const cookie = await request.headers.get('cookie');
+  const session = await getSession(cookie);
+  const user = session.get('userId');
+  const likedSongs = await getUserLikedSongs(user);
+  const playlists = await getUserPlaylists(user);
+  const token = await getSpotifyAdminToken();
   const url = new URL(request.url);
-  const query = url.searchParams.get("q") || ""; // Obtener la consulta de búsqueda
-  const type = url.searchParams.get("type") || "track";
-  const result = await search(query, type);
+  const query = url.searchParams.get("q") || "";
   const offset = parseInt(url.searchParams.get("offset") || "0", 10);
   const limit = parseInt(url.searchParams.get("limit") || "10", 10);
 
-  const songs = result.tracks?.items.map((track: { id: any; name: any; artists: { name: any }[]; album: { images: { url: any }[] }; duration_ms: number; }) => ({
+  const result = await search(query, "artist,track", offset, limit);
+
+  const songs = result.tracks?.items?.map((track: any) => ({
     id: track.id,
-    title: track.name,
-    artist: track.artists[0]?.name || "Desconocido",
-    genre: "",
-    photo: track.album.images[0]?.url || "",
-    duration: track.duration_ms / 1000,
-    url: "",
+    title: track.name || "Desconocido",
+    artist: track.artists?.map((a: any) => a.name).join(", ") || "Desconocido",
+    artistId:track.artists.id,
+    name_album: track.album?.name || "Álbum desconocido",
+    photo: track.album?.images?.[0]?.url || "/placeholder.jpg",
+    duration: track.duration_ms,
+    url: track.uri,
   })) || [];
 
-  const artists = result.artists?.items.map((artist: { id: any; name: any }) => ({
-    id: artist.id,
-    name: artist.name || "Desconocido",
-    profile_image: "",
-  })) || [];
+  const artists = result.artists?.items
+    ?.filter((artist: any) => artist.name.toLowerCase().includes(query))
+    .map((artist: any) => ({
+      id: artist.id,
+      name: artist.name || "Desconocido",
+      profile_image: artist.images?.[0]?.url || "/placeholder.jpg",
+    })) || [];
 
-  const albums = result.albums?.items.map((album: { id: string | number | bigint; name: any }) => ({
-    id: album.id,
-    name: album.name || "Desconocido",  
-  })) || [];
 
   return json({
     songs,
     artists,
-    albums,
     offset,
     limit,
     query,
-    type,
+    token,
+    likedSongs,
+    playlists
   });
 };
 
 export default function SearchPage() {
-  const { songs, artists, albums, offset, limit, query, type } = useLoaderData<typeof loader>();
+  const { songs, artists, offset, query, token, likedSongs, playlists } = useLoaderData<typeof loader>();
 
   return (
     <div className="search-page">
-      <SearchBar />
-      <div className="flex flex-col">
+      <SearchBar initialQuery={query} />
+
+      <div className="results">
+        {/* Canciones */}
+        <h2>Canciones</h2>
         {songs.length ? (
-          songs.map((song: { id: any; title?: string; artist?: string; genre?: string; photo?: string; duration?: number; url?: string; }) => (
-            <Song key={song.id} id={song.id}  songData={{
-                id: song.id,
-                title: song.title || "Título desconocido",
-                artist: song.artist || "Artista desconocido",
-                genre: song.genre || "Género desconocido",
-                photo: song.photo || "/placeholder.jpg",
-                duration: song.duration || 0,
-                url: song.url || "",
-              }} />
+          songs.map((song: any) => (
+            <Song
+              key={song.id}
+              token={token!}
+              songData={song}
+              likedSongs={likedSongs}
+              playlists={playlists}
+            />
           ))
         ) : (
           <p>No se encontraron canciones.</p>
         )}
+
+        {/* Artistas */}
+        <h2>Artistas</h2>
         {artists.length ? (
-          artists.map((artist: { id: string | number; name: string; profile_image: string | undefined; }) => (
-            <Artist key={artist.id} id={artist.id} name={artist.name} profile_image={artist.profile_image} />
+          artists.map((artist: any) => (
+            <Artist
+              key={artist.id}
+              id={artist.id}
+              name={artist.name}
+              profile_image={artist.profile_image}
+              offset={offset}
+            />
           ))
         ) : (
           <p>No se encontraron artistas.</p>
         )}
-        {albums.length ? (
-          albums.map((album: { id:string | number | bigint; name: string }) => (
-            <Album key={album.id} id={album.id} name={album.name} />
-          ))
-        ) : (
-          <p>No se encontraron álbumes.</p>
-        )}
-        <SearchResults
-          tracks={songs}
-          artists={artists}
-          albums={albums}
-          offset={offset}
-          limit={limit}
-          query={query}
-          type={type}
-        />
       </div>
     </div>
   );

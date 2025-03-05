@@ -1,29 +1,35 @@
-import { useState } from 'react';
-import { Form } from '@remix-run/react';
+import { useState, useEffect } from "react";
+import { Form, useSearchParams } from "@remix-run/react";
 
-const SearchBar: React.FC = () => {
-    const [query, setQuery] = useState('');
-    const [type, setType] = useState('artist,album,track'); // Valor predeterminado
+interface SearchBarProps {
+    initialQuery?: string;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ initialQuery = "" }: SearchBarProps) => {
+    const [query, setQuery] = useState<string>(initialQuery);
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        setQuery(searchParams.get("q") || "");
+    }, [searchParams]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
     };
 
-    const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setType(e.target.value);
-    };
-
     return (
-        <Form method="get" action="/search">
+        <Form method="get" action="/search" className="search-bar flex items-center gap-2">
             <input
                 type="text"
                 name="q"
                 value={query}
                 onChange={handleInputChange}
-                placeholder="Búsqueda..."
-                className='text-primary'
+                placeholder="Buscar en BeatHub..."
+                className="text-primary border p-2 rounded-lg w-full"
             />
-            <button type="submit">Buscar</button>
+            <button type="submit" className="p-2 bg-blue-500 text-white rounded-lg">
+                🔍
+            </button>
         </Form>
     );
 };

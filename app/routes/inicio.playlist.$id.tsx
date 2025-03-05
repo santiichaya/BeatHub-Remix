@@ -147,6 +147,7 @@ export default function Playlist() {
                 id: cancion.id,
                 title: cancion.name,
                 artist: artistas,
+                artistId:cancion.artists.id,
                 name_album: cancion.album.name,
                 photo: cancion.album.images[0].url,
                 duration: cancion.duration_ms,

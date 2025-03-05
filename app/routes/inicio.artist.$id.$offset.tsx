@@ -13,18 +13,28 @@ import { validateForm } from "~/utils/validateform";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   await requiredLoggedInUser(request);
-  const cookie = await request.headers.get('cookie');
+  const cookie = await request.headers.get("cookie");
   const session = await getSession(cookie);
-  const user = session.get('userId');
+  const user = session.get("userId");
   const likedSongs = await getUserLikedSongs(user);
   const playlists = await getUserPlaylists(user);
   const followedArtists = await getFollowedArtists(user);
   const offset = params.offset ?? "0";
   const token = await getSpotifyAdminToken();
   const claveArtista = `https://api.spotify.com/v1/search?q=genre:pop&type=artist&limit=6&offset=${offset}`;
-  const datosArtist = session.get(claveArtista).find((artista: any) => {
-    return artista.id === params.id;
-  });
+
+  let datosArtist = session.get(claveArtista)?.find((artista: any) => artista.id === params.id);
+
+  if (!datosArtist) {
+    const res = await fetch(`https://api.spotify.com/v1/artists/${params.id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.ok) {
+      datosArtist = await res.json();
+    }
+  }
+
   const options = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -205,6 +215,7 @@ export default function ArtistDetail() {
                   id: cancion.id,
                   title: cancion.name,
                   artist: artistas,
+                  artistId:cancion.artists.id,
                   name_album: cancion.album.name,
                   photo: cancion.album.images[0].url,
                   duration: cancion.duration_ms,
