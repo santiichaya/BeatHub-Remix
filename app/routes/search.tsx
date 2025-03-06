@@ -6,14 +6,13 @@ import { Artist } from "~/components/Artist";
 import { search } from "~/models/search.server";
 import { getSpotifyAdminToken } from "~/.server/spotify";
 import { getSession } from "~/utils/session";
-import { getUserLikedSongs } from "~/models/song.server";
-import { getUserPlaylists } from "~/models/playlist.server";
+import { getAllLikedSongs, getUserPlaylists } from "~/models/playlist.server";
 
 export const loader = async ({ request }: { request: Request }) => {
   const cookie = await request.headers.get('cookie');
   const session = await getSession(cookie);
   const user = session.get('userId');
-  const likedSongs = await getUserLikedSongs(user);
+  const likedSongs = await getAllLikedSongs(user);
   const playlists = await getUserPlaylists(user);
   const token = await getSpotifyAdminToken();
   const url = new URL(request.url);

@@ -4,13 +4,12 @@ import ReactModal from "react-modal";
 import { AddPlayList, HeartIcon, HeartSolidIcon } from "./icons";
 import PlayButton from "./PlayButton";
 import { convert_ms_h } from "~/utils/convert_time";
-import { artist } from "~/models/artist.server";
 
-type SongData = {
+export type SongData = {
   id: string;
   title: string;
   artist: string;
-  artistId:string;
+  playlistId:string;
   name_album: string;
   photo: string;
   duration: number;
@@ -46,7 +45,7 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
         url: songData.url,
       },
       { method: "POST",
-        action:`/inicio/playlist/${songData.artistId}`
+        action:`/inicio/playlist/${songData.playlistId}`
        }
     );
   };

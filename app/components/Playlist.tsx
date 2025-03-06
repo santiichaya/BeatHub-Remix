@@ -9,7 +9,7 @@ export function Playlist({ name, url, id }: PlayListProp) {
     return (
         <NavLink reloadDocument to={
             {
-                pathname: `playlist/${id}`,
+                pathname: `../inicio/playlist/${id}`,
             }
         } className={"bg-gray-800 md:h-20 sm:h-16 lg:w-[26%] lg:m-8 lg:h-24 rounded-[10px] w-[40%] m-4 h-12"}>
                 <article className="flex">

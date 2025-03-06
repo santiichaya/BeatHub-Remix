@@ -15,7 +15,6 @@ model User {
   createdAt       DateTime   @default(now()) 
   favoriteSongId  String?
   playlists       Playlist[]
-  likedSongs      Song[]    @relation("LikedSongs")
   favoriteSong    Song?     @relation("FavoriteSong", fields: [favoriteSongId], references: [id], onDelete: Cascade)
   likedArtists    Artist[]  @relation("LikedArtists")
 }
@@ -24,6 +23,8 @@ model Playlist {
   id       String       @id @default(cuid())
   name     String
   userId   String
+  photo    String
+  description String
   songs    Song[]
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -37,7 +38,6 @@ model Song {
   photo_song  String
   duration    Int
   url         String
-  likedBy     User[]     @relation("LikedSongs")
   favoritedBy User[]    @relation("FavoriteSong")
   playlists   Playlist[]
 }
