@@ -179,7 +179,7 @@ export default function ArtistDetail() {
     >
       <div className="bg-gradient-to-b from-black to-transparent p-8 pt-4">
         <div className="flex justify-between">
-          <h1 className="text-8xl">{datosArtist.name}</h1>
+          <h1 className="text-6xl md:text-8xl mb-2">{datosArtist.name}</h1>
           <button
             onClick={handleFollow}
             className={`mt-2 px-4 py-2 rounded-lg font-medium transition w-28 h-16 align-middle ${isFollowing ? "bg-gray-500 text-white" : "bg-blue-500 text-white"

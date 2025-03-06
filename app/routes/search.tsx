@@ -27,7 +27,7 @@ export const loader = async ({ request }: { request: Request }) => {
     id: track.id,
     title: track.name || "Desconocido",
     artist: track.artists?.map((a: any) => a.name).join(", ") || "Desconocido",
-    artistId:track.artists.id,
+    artistId: track.artists.id,
     name_album: track.album?.name || "Álbum desconocido",
     photo: track.album?.images?.[0]?.url || "/placeholder.jpg",
     duration: track.duration_ms,
@@ -59,12 +59,12 @@ export default function SearchPage() {
   const { songs, artists, offset, query, token, likedSongs, playlists } = useLoaderData<typeof loader>();
 
   return (
-    <div className="search-page">
+    <div className="p-8">
       <SearchBar initialQuery={query} />
 
-      <div className="results">
+      <div className="bg-grey p-8 mt-8 rounded-[30px]">
         {/* Canciones */}
-        <h2>Canciones</h2>
+        <h2 className="text-3xl mb-8">Canciones</h2>
         {songs.length ? (
           songs.map((song: any) => (
             <Song
@@ -79,21 +79,29 @@ export default function SearchPage() {
           <p>No se encontraron canciones.</p>
         )}
 
-        {/* Artistas */}
-        <h2>Artistas</h2>
-        {artists.length ? (
-          artists.map((artist: any) => (
-            <Artist
-              key={artist.id}
-              id={artist.id}
-              name={artist.name}
-              profile_image={artist.profile_image}
-              offset={offset}
-            />
-          ))
-        ) : (
-          <p>No se encontraron artistas.</p>
-        )}
+        <div>
+          <h2 className="text-3xl mb-8">Artistas</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {artists.length ? (
+            artists.map((artist: any) => (
+              <div
+                key={artist.id}
+                className="p-4 bg-gray-800 rounded-lg hover:shadow-lg transition-shadow"
+              >
+                <Artist
+                  id={artist.id}
+                  name={artist.name}
+                  profile_image={artist.profile_image}
+                  offset={offset}
+                />
+              </div>
+            ))
+          ) : (
+            <p>No se encontraron artistas.</p>
+          )}
+          </div>
+        </div>
+
       </div>
     </div>
   );

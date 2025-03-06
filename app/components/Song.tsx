@@ -78,8 +78,8 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
 
   return (
     <div className="w-full flex justify-center">
-      <article className="h-12 w-[95%] flex justify-between bg-black bg-opacity-70 rounded-lg overflow-hidden m-2 text-text-secondary">
-        <header className="w-4/5 flex items-center">
+      <article className="h-fit w-[95%] flex justify-between bg-black bg-opacity-70 rounded-lg overflow-hidden m-2 text-text-secondary">
+        <header className="w-8/12 flex items-center lg:w-4/5">
           <img src={songData.photo} className="h-12 rounded-lg" alt={`${songData.title} cover`} />
           <div className="h-full w-4/5 flex items-center pl-4">
             <h3 className="w-[35%] text-start">{songData.title}</h3>
@@ -87,7 +87,7 @@ export function Song({ token, songData, likedSongs, playlists }: SongsProps) {
             <p className="text-xs font-light w-[25%] text-start">{songData.name_album}</p>
           </div>
         </header>
-        <footer className="w-1/5 flex justify-around items-center">
+        <footer className="w-4/12 flex justify-around items-center lg:w-1/5">
           <p className="text-sm font-thin">{convert_ms_h(songData.duration)}</p>
 
           <button
