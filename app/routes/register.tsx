@@ -56,7 +56,6 @@ export const action: ActionFunction = async ({ request }) => {
                 user = await getUserByEmail(email);
                 if (user == null) {
                     const passwordHash = await generate_hash(password);
-                    console.log(passwordHash);
                     await createUser(username, passwordHash, email);
                     user = await getUserByUsername(username);
                     const cookieHeader = request.headers.get("cookie"); //Recojo la cookie asociada a la sesión.

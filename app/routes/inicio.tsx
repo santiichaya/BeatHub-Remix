@@ -22,7 +22,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     session.set(claveArtista,artistData.artists.items);
   }
   
-  //console.log(session.data)
   if(session.get(clavePlaylist)==null){
     const playlistAdmin = await fetch(
       "https://api.spotify.com/v1/me/playlists?limit=6",

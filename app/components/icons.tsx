@@ -68,7 +68,7 @@ export function SearchIcon() {
 
 export function HomeButton() {
   return (
-    <div className="w-[3.75rem] h-[3.75rem] rounded-full mb-20">
+    <div className="w-[3.75rem] h-[3.75rem] rounded-full">
       <button className="w-[3.75rem] h-[3.75rem]">
         <svg height="100%" style={{ fillRule: "evenodd" }}
           viewBox="0 0 32 32">
@@ -171,7 +171,7 @@ export function AddPlayList() {
 
 export function MyMusic() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12 mr-12 md:mr-0">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">
       <path strokeLinecap="round" strokeLinejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z" />
     </svg>
   )
