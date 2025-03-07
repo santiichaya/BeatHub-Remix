@@ -7,8 +7,10 @@ import { search } from "~/models/search.server";
 import { getSpotifyAdminToken } from "~/.server/spotify";
 import { getSession } from "~/utils/session";
 import { getAllLikedSongs, getUserPlaylists } from "~/models/playlist.server";
+import { requiredLoggedInUser } from "~/utils/auth_server";
 
 export const loader = async ({ request }: { request: Request }) => {
+  await requiredLoggedInUser(request);
   const cookie = await request.headers.get('cookie');
   const session = await getSession(cookie);
   const user = session.get('userId');

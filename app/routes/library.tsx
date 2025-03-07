@@ -31,8 +31,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export const playlistSchema = z.object({
   name: z.string().min(1, "El título es obligatorio"),
   description: z.string().max(300, "La descripción no puede superar los 300 caracteres"),
-  image: z.string().url("La URL de la imagen no es válida"),
+  image: z.string().url("La URL de la imagen no es válida").optional(),
 });
+
 
 const playlistDeleteSchema = z.object({
   playlistId: z.string().min(1, "El ID de la playlist es obligatorio"),
@@ -45,25 +46,24 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const session = await getSession(cookie);
   const userId = session.get("userId");
 
-  const actionType = formData.get("_action"); // Detectamos qué acción realizar
+  const actionType = formData.get("_action");
 
   switch (actionType) {
     case "createPlaylist":
       {
-        const imageFile = formData.get("image") as File;
-        if (!imageFile) {
-          return json({ error: "La imagen es obligatoria" }, { status: 400 });
-        }
+        const imageFile = formData.get("image") as File | null;
+        let imageUrl = "";
 
-        const imageUrl = await uploadToCloudinary(imageFile);
-        formData.set("image", imageUrl);
+        if (imageFile) {
+          imageUrl = await uploadToCloudinary(imageFile);
+          formData.set("image", imageUrl);
+        }
 
         return validateForm(
           formData,
           playlistSchema,
-          async (data) => {
-            const { name, description, image } = data;
-            await createPlaylist(userId, name, image, description);
+          async ({ name, description, image }) => {
+            await createPlaylist(userId, name, image || "", description);
             return json({ success: true });
           },
           (errors) => json({ errors }, { status: 400 })
@@ -71,61 +71,61 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       }
 
     case "deletePlaylist":
+      return validateForm(
+        formData,
+       playlistDeleteSchema,
+        async ({ playlistId }) => {
+          const playlist = await checkedPlaylist(playlistId, userId);
+          if (!playlist) {
+            return json({ error: "Playlist no encontrada" }, { status: 404 });
+          }
+
+          if (playlist.photo) {
+            await deleteImageFromCloudinary(playlist.photo);
+          }
+          await deletePlaylist(playlistId);
+          return json({ success: true });
+        },
+        (errors) => json({ errors }, { status: 400 })
+      );
+
+    case "updatePlaylist":
       {
         const playlistId = formData.get("playlistId") as string;
+        const newImageFile = formData.get("image") as File | null;
+
+        const playlist = await checkedPlaylist(playlistId, userId);
+        if (!playlist) {
+          return json({ error: "Playlist no encontrada" }, { status: 404 });
+        }
+
+        let finalImageUrl = playlist.photo;
+
+        if (newImageFile) {
+          if (playlist.photo) {
+            await deleteImageFromCloudinary(playlist.photo);
+          }
+          finalImageUrl = await uploadToCloudinary(newImageFile);
+        }
+
+        formData.set("image", finalImageUrl);
 
         return validateForm(
           formData,
-         playlistDeleteSchema,
-          async () => {
-            const playlist = await checkedPlaylist(playlistId, userId);
-            if (!playlist) {
-              return json({ error: "Playlist no encontrada" }, { status: 404 });
-            }
-
-            await deleteImageFromCloudinary(playlist.photo);
-            await deletePlaylist(playlistId);
+          playlistSchema,
+          async ({ name, description, image }) => {
+            await updatePlaylist(playlistId, name, description, image || "");
             return json({ success: true });
           },
           (errors) => json({ errors }, { status: 400 })
         );
       }
 
-      case "updatePlaylist":
-        {
-          const playlistId = formData.get("playlistId") as string;
-          const newImageFile = formData.get("image") as File | null;
-  
-          const playlist = await checkedPlaylist(playlistId, userId);
-          if (!playlist) {
-            return json({ error: "Playlist no encontrada" }, { status: 404 });
-          }
-  
-          let finalImageUrl = playlist.photo;
-  
-          if (newImageFile) {
-            await deleteImageFromCloudinary(playlist.photo);
-            finalImageUrl = await uploadToCloudinary(newImageFile);
-          }
-  
-          formData.set("image", finalImageUrl);
-  
-          return validateForm(
-            formData,
-            playlistSchema,
-            async ({name, description, image }) => {
-              await updatePlaylist(playlistId, name, description, image);
-              return json({ success: true });
-            },
-            (errors) => json({ errors }, { status: 400 })
-          );
-        }
-  
-
     default:
       return json({ error: "Acción no válida" }, { status: 400 });
   }
 };
+
 
 
 
@@ -218,7 +218,7 @@ export default function UserLibrary() {
         <ul className="mt-4 grid grid-cols-4 gap-8">
           {playlists.map((playlist) => (
             <li key={playlist.id} className="p-2 rounded-md mt-2">
-              <Playlist id={playlist.id} name={playlist.name} url={playlist.photo}/>
+              <Playlist id={playlist.id} name={playlist.name} url={playlist.photo && playlist.photo !== "" ? playlist.photo : "/img/profilePicture.jpg"}/>
 
               <div className="flex gap-2">
                 {playlist.name !== "Canciones que te gustan" && (
@@ -263,7 +263,7 @@ export default function UserLibrary() {
           <div className="flex justify-center mb-4">
             <label htmlFor="fileUpload" className="cursor-pointer">
               <img
-                src={preview || "/default-image.jpg"}
+                src={preview && preview !== "" ? preview : "/img/profilePicture.jpg"}
                 alt="Playlist Cover"
                 className="w-24 h-24 rounded-md object-cover"
               />
