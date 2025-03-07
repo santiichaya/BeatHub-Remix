@@ -14,9 +14,9 @@ export default function Index() {
   return (
     <React.Fragment>
       {/* Carrusel de Artistas */}
-      <div className="text-center mb-8 text-text-secondary pt-4 px-4">
-        <h2 className="text-3xl font-bold mb-4">Artistas Populares</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="mb-8 text-text-secondary pt-4 px-4">
+        <h2 className="text-3xl font-bold mb-4 pl-4">Artistas Populares</h2>
+        <div className="text-center grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {artists.map((artist: any) => (
             <div
               key={artist.id}
@@ -64,7 +64,7 @@ export default function Index() {
 
       {/* Playlists */}
       <div className="w-[100%] flex flex-wrap justify-center">
-        <h1 className="w-full text-3xl flex justify-center font-bold">
+        <h1 className="w-full text-3xl flex font-bold pl-8">
           Playlists de BeatHub
         </h1>
         {playlists.map((playlist: any) => (

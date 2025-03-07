@@ -215,10 +215,10 @@ export default function UserLibrary() {
           Crear Playlist
         </button>
 
-        <ul className="mt-4">
+        <ul className="mt-4 grid grid-cols-4 gap-8">
           {playlists.map((playlist) => (
-            <li key={playlist.id} className="border p-2 rounded-md mt-2 flex items-center justify-between">
-              <Playlist id={playlist.id} name={playlist.name} url={playlist.photo} />
+            <li key={playlist.id} className="p-2 rounded-md mt-2">
+              <Playlist id={playlist.id} name={playlist.name} url={playlist.photo}/>
 
               <div className="flex gap-2">
                 {playlist.name !== "Canciones que te gustan" && (
